@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { TRPCReactProvider } from "@/trpc/client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,10 +28,12 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <body
-        className={`${geistSans.variable} ${dmSerifDisplay.variable} antialiased`}
+        className={`${geistSans.variable} ${dmSerifDisplay.variable} antialiased bg-zinc-100`}
       >
-        {children}
-        <Toaster richColors theme="light" />
+        <TRPCReactProvider>
+          {children}
+          <Toaster richColors theme="light" />
+        </TRPCReactProvider>
       </body>
     </html>
   );
