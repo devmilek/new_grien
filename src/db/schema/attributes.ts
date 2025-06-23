@@ -1,8 +1,8 @@
 import { pgEnum, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 
-export const attributesTypes = ["cuisines", "diets", "occasions"] as const;
-export type AttributesType = (typeof attributesTypes)[number];
-export const attributesTypesEnum = pgEnum("attributes_type", attributesTypes);
+export const attributeTypes = ["cuisines", "diets", "occasions"] as const;
+export type AttributeType = (typeof attributeTypes)[number];
+export const attributesTypesEnum = pgEnum("attribute_type", attributeTypes);
 
 export const categories = pgTable("categories", {
   id: uuid("id").primaryKey().defaultRandom(),
