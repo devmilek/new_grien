@@ -8,17 +8,22 @@ interface NumberInputProps {
   value?: number;
   onChange?: (value: number) => void;
   disabled?: boolean;
+  step?: number;
+  minValue?: number;
 }
 
 export const NumberInput = ({
   disabled,
   onChange,
   value,
+  step,
+  minValue = 0,
 }: NumberInputProps) => {
   return (
     <NumberField
       value={value}
-      minValue={0}
+      minValue={minValue}
+      step={step}
       onChange={onChange}
       isDisabled={disabled}
     >

@@ -12,6 +12,7 @@ import {
 import { FormProvider, useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { RecipeFormBasics } from "./basics";
+import { RecipeFormIngredients } from "./ingredients";
 
 const steps = [
   {
@@ -61,7 +62,10 @@ export const CreateRecipeForm = () => {
       </div>
       <Form {...methods}>
         <FormProvider {...methods}>
-          <form>{currentStep === 1 && <RecipeFormBasics />}</form>
+          <form>
+            {currentStep === 1 && <RecipeFormBasics />}
+            {currentStep === 2 && <RecipeFormIngredients />}
+          </form>
         </FormProvider>
       </Form>
     </div>
