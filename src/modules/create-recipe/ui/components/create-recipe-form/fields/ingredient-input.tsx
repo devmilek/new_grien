@@ -19,9 +19,9 @@ import { useDebounceCallback } from "usehooks-ts";
 interface IngredientInputProps {
   value?: {
     id: string;
-    alias: string;
+    name: string;
   };
-  onChange?: (value: { id: string; alias: string }) => void;
+  onChange?: (value: { id: string; name: string }) => void;
   disabled?: boolean;
 }
 
@@ -49,7 +49,7 @@ export const IngredientInput = ({
       onValueChange={(val) => {
         onChange?.({
           id: val,
-          alias: data?.find((item) => item.id === val)?.alias || "",
+          name: data?.find((item) => item.id === val)?.alias || "",
         });
       }}
       inputValue={search}
@@ -58,6 +58,7 @@ export const IngredientInput = ({
         setSearch(val);
       }}
       manualFiltering
+      disabled={disabled}
     >
       <ComboboxAnchor>
         <ComboboxInput className="capitalize" />

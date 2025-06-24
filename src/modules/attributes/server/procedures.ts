@@ -9,8 +9,21 @@ export const attributesRouter = createTRPCRouter({
       orderBy: asc(categories.name),
     });
 
-    console.log("Fetched categories:", data);
-
     return data;
+  }),
+
+  getAttributes: baseProcedure.query(async () => {
+    const data = await db.query.attributes.findMany();
+
+    const cuisines = data.filter((attr) => attr.type === "cuisines");
+    const diets = data.filter((attr) => attr.type === "diets");
+    const occasions = data.filter((attr) => attr.type === "occasions");
+
+    return {
+      cuisines,
+      diets,
+      occasions,
+      all: data,
+    };
   }),
 });

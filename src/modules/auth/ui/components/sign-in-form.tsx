@@ -16,9 +16,11 @@ import { AlertTriangle, Loader2, LockIcon, MailIcon } from "lucide-react";
 import { InputWithIcon, PasswordInputWithIcon } from "@/components/ui/input";
 import { authClient, getErrorMessage } from "@/lib/auth/auth-client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useRouter } from "next/navigation";
 
 export const SignInForm = () => {
   const [error, setError] = React.useState<string | null>(null);
+  const router = useRouter();
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -37,6 +39,7 @@ export const SignInForm = () => {
       {
         onSuccess: () => {
           form.reset();
+          router.push("/");
         },
         onError: ({ error }) => {
           if (error.code) {

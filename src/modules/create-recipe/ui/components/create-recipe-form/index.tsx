@@ -13,6 +13,13 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { RecipeFormBasics } from "./basics";
 import { RecipeFormIngredients } from "./ingredients";
+import {
+  createRecipeSchema,
+  CreateRecipeSchema,
+} from "@/modules/create-recipe/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { RecipeFormSteps } from "./steps";
+import { RecipeFormAdditional } from "./additional";
 
 const steps = [
   {
@@ -34,13 +41,40 @@ const steps = [
 ];
 
 export const CreateRecipeForm = () => {
-  const methods = useForm();
+  const methods = useForm<CreateRecipeSchema>({
+    resolver: zodResolver(createRecipeSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+
+      ingredients: [
+        {
+          ingredient: {
+            id: "",
+            name: "",
+          },
+          quantity: 0,
+          unit: "",
+        },
+      ],
+      attributes: [],
+      steps: [
+        {
+          description: "",
+        },
+      ],
+    },
+  });
   const [currentStep, setCurrentStep] = React.useState(1);
 
   return (
-    <div className="py-10">
-      <div className="space-y-8 text-center mb-12">
-        <Stepper defaultValue={currentStep} onValueChange={setCurrentStep}>
+    <div className="">
+      <div className="space-y-8 text-center mb-6 md:mb-12">
+        <Stepper
+          defaultValue={currentStep}
+          onValueChange={setCurrentStep}
+          className="p-8 rounded-2xl bg-background border"
+        >
           {steps.map(({ step, title }) => (
             <StepperItem
               key={step}
@@ -49,7 +83,7 @@ export const CreateRecipeForm = () => {
             >
               <StepperTrigger className="rounded max-md:flex-col">
                 <StepperIndicator />
-                <div className="text-center md:text-left">
+                <div className="text-center md:text-left hidden sm:block">
                   <StepperTitle>{title}</StepperTitle>
                 </div>
               </StepperTrigger>
@@ -65,6 +99,8 @@ export const CreateRecipeForm = () => {
           <form>
             {currentStep === 1 && <RecipeFormBasics />}
             {currentStep === 2 && <RecipeFormIngredients />}
+            {currentStep === 3 && <RecipeFormSteps />}
+            {currentStep === 4 && <RecipeFormAdditional />}
           </form>
         </FormProvider>
       </Form>
