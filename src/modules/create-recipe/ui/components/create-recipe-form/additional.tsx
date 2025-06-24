@@ -1,19 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import {
-  createRecipeSchema,
-  CreateRecipeSchema,
-} from "@/modules/create-recipe/schemas";
+import { recipeSchema, RecipeSchema } from "@/modules/create-recipe/schemas";
+import { uploadImage } from "@/modules/storage/server/upload-image";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import React from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 
 export const RecipeFormAdditional = () => {
   const trpc = useTRPC();
-  const form = useFormContext<CreateRecipeSchema>();
+  const form = useFormContext<RecipeSchema>();
 
   const { data } = useSuspenseQuery(
     trpc.attributes.getAttributes.queryOptions()
@@ -22,7 +21,7 @@ export const RecipeFormAdditional = () => {
   const onError = () => {
     const values = form.getValues();
 
-    const validates = createRecipeSchema.safeParse(values);
+    const validates = recipeSchema.safeParse(values);
 
     if (!validates.success) {
       const issues = validates.error.issues.map((issue) => issue.message);
@@ -48,7 +47,11 @@ export const RecipeFormAdditional = () => {
     }
   };
 
-  const saveAsDraft = async () => {};
+  const saveAsDraft = async (values: RecipeSchema) => {
+    const formData = new FormData();
+    formData.append("image", values.image);
+    await uploadImage(formData);
+  };
 
   const attributesList = [
     {
@@ -66,6 +69,8 @@ export const RecipeFormAdditional = () => {
   ];
 
   const selectedAttributes = form.watch("attributes") || [];
+
+  const isSubmitting = form.formState.isSubmitting;
 
   return (
     <>
@@ -108,6 +113,7 @@ export const RecipeFormAdditional = () => {
             type="button"
             onClick={form.handleSubmit(saveAsDraft, onError)}
           >
+            {isSubmitting && <Loader2 className="animate-spin" />}
             Opublikuj przepis
           </Button>
         </div>

@@ -13,10 +13,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { RecipeFormBasics } from "./basics";
 import { RecipeFormIngredients } from "./ingredients";
-import {
-  createRecipeSchema,
-  CreateRecipeSchema,
-} from "@/modules/create-recipe/schemas";
+import { recipeSchema, RecipeSchema } from "@/modules/create-recipe/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RecipeFormSteps } from "./steps";
 import { RecipeFormAdditional } from "./additional";
@@ -41,11 +38,14 @@ const steps = [
 ];
 
 export const CreateRecipeForm = () => {
-  const methods = useForm<CreateRecipeSchema>({
-    resolver: zodResolver(createRecipeSchema),
+  const methods = useForm<RecipeSchema>({
+    resolver: zodResolver(recipeSchema),
     defaultValues: {
-      title: "",
-      description: "",
+      title: "Pulpety w sosie koperkow",
+      description: "Pyszne pulpety w sosie koperkowym, idealne na obiad.",
+      difficulty: "easy",
+      portions: 4,
+      preparationTime: 30,
 
       ingredients: [
         {
@@ -60,7 +60,8 @@ export const CreateRecipeForm = () => {
       attributes: [],
       steps: [
         {
-          description: "",
+          description:
+            "Bułkę namocz w mleku a następnie odciśnij. Mięso przełóż do miski i wyrób dokładnie z jajkiem i bułką. Masę dopraw do smaku szczyptą czarnego pieprzu oraz Delikatem Knorr.",
         },
       ],
     },

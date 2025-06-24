@@ -7,16 +7,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CreateRecipeSchema } from "@/modules/create-recipe/schemas";
+import { RecipeSchema } from "@/modules/create-recipe/schemas";
 import React from "react";
 import { useFormContext } from "react-hook-form";
 import { CategorySelect } from "./fields/category-select";
 import { DifficultySelect } from "./fields/difficulty-select";
 import { NumberInput } from "./fields/number-input";
 import { TimeInput } from "./fields/time-input";
+import Dropzone from "@/modules/storage/ui/components/dropzone";
 
 export const RecipeFormBasics = () => {
-  const form = useFormContext<CreateRecipeSchema>();
+  const form = useFormContext<RecipeSchema>();
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -45,6 +46,19 @@ export const RecipeFormBasics = () => {
               <FormLabel>Opis przepisu</FormLabel>
               <FormControl>
                 <Textarea {...field} maxLength={500} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="image"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Opis przepisu</FormLabel>
+              <FormControl>
+                <Dropzone value={field.value} onValueChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>

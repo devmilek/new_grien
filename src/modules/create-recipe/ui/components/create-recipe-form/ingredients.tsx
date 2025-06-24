@@ -1,6 +1,6 @@
 "use client";
 
-import { CreateRecipeSchema } from "@/modules/create-recipe/schemas";
+import { RecipeSchema } from "@/modules/create-recipe/schemas";
 import React from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 
 export const RecipeFormIngredients = () => {
-  const form = useFormContext<CreateRecipeSchema>();
+  const form = useFormContext<RecipeSchema>();
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,

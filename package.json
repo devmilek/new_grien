@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.835.0",
     "@dicebear/collection": "^9.2.3",
     "@dicebear/core": "^9.2.3",
     "@diceui/combobox": "^1.2.0",
@@ -71,10 +72,12 @@
     "react-resizable-panels": "^3.0.3",
     "recharts": "^3.0.0",
     "server-only": "^0.0.1",
+    "sharp": "^0.34.2",
     "sonner": "^2.0.5",
     "superjson": "^2.2.2",
     "tailwind-merge": "^3.3.1",
     "usehooks-ts": "^3.1.1",
+    "uuid": "^11.1.0",
     "vaul": "^1.1.2",
     "zod": "^3.25.67"
   },

@@ -1,5 +1,6 @@
 import { difficulties } from "@/db/schema";
 import { z } from "zod/v4";
+import { MAX_FILE_SIZE, SUPPORTED_IMAGE_TYPES } from "../storage/config";
 
 export const ingredientSchema = z.object({
   quantity: z.number().min(0, "Ilość składnika musi być większa lub równa 0"),
@@ -16,13 +17,20 @@ export const ingredientSchema = z.object({
 
 export type IngredientSchema = z.infer<typeof ingredientSchema>;
 
-export const createRecipeSchema = z.object({
+export const recipeSchema = z.object({
   title: z.string().min(1, "Tytuł przepisu jest wymagany"),
   description: z
     .string()
     .min(1, "Opis przepisu jest wymagany")
     .max(500, "Opis przepisu nie może przekraczać 500 znaków"),
   categoryId: z.uuid("Nieprawidłowy identyfikator kategorii"),
+  // TODO: add validation for image file type and size
+  image: z
+    .file({
+      error: "Zdjęcie przepisu jest wymagane",
+    })
+    .max(MAX_FILE_SIZE)
+    .mime(SUPPORTED_IMAGE_TYPES),
   difficulty: z.enum(difficulties, {
     error: "Wybierz poziom trudności przepisu",
   }),
@@ -57,4 +65,9 @@ export const createRecipeSchema = z.object({
     .max(20, "Maksymalnie 20 kroków przygotowania"),
 });
 
-export type CreateRecipeSchema = z.infer<typeof createRecipeSchema>;
+// recipe schema without image validation
+export const recipeSchemaWithoutImage = recipeSchema.omit({
+  image: true,
+});
+
+export type RecipeSchema = z.infer<typeof recipeSchema>;
