@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { GerUserRecipes } from "../../types";
 import {
@@ -18,12 +20,31 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { useTRPC } from "@/trpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface UserRecipeCardProps {
   data: GerUserRecipes[number];
 }
 
 const UserRecipeCard = ({ data }: UserRecipeCardProps) => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const deleteRecipe = useMutation(
+    trpc.account.deleteRecipe.mutationOptions({
+      onSuccess: () => {
+        toast.success("Przepis został usunięty.");
+        queryClient.invalidateQueries({
+          queryKey: trpc.account.getUserRecipes.infiniteQueryKey(),
+        });
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    })
+  );
+
   const badges = [
     {
       icon: ChartNoAxesColumnDecreasing,
@@ -77,18 +98,30 @@ const UserRecipeCard = ({ data }: UserRecipeCardProps) => {
         </div>
       </div>
       <div className="flex gap-2">
+        {data.published && (
+          <Button variant="outline" size="icon">
+            <ShareIcon />
+          </Button>
+        )}
         <Button variant="outline" size="icon">
           <Link href={`/utworz-przepis/${data.id}`}>
             <PenIcon />
           </Link>
         </Button>
         <Button variant="outline" size="icon">
-          <EyeIcon />
+          <Link href={`/przepis/${data.id}`}>
+            <EyeIcon />
+          </Link>
         </Button>
-        <Button variant="outline" size="icon">
-          <ShareIcon />
-        </Button>
-        <Button variant="outline" size="icon">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() =>
+            deleteRecipe.mutate({
+              id: data.id,
+            })
+          }
+        >
           <TrashIcon />
         </Button>
       </div>

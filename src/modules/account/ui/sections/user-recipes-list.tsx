@@ -9,6 +9,9 @@ import {
   UserRecipeCard,
   UserRecipeCardSkeleton,
 } from "../components/user-recipe-card";
+import { EmptyState } from "@/components/empty-state";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const UserRecipesList = () => {
   const trpc = useTRPC();
@@ -56,6 +59,16 @@ export const UserRecipesList = () => {
               <UserRecipeCardSkeleton key={index} />
             ))}
           </div>
+        )}
+        {recipes.length === 0 && (
+          <EmptyState
+            title="Brak przepisów"
+            description="Nie masz jeszcze żadnych przepisów. Zacznij tworzyć swoje ulubione dania!"
+          >
+            <Button asChild>
+              <Link href="/utworz-przepis">Utwórz przepis</Link>
+            </Button>
+          </EmptyState>
         )}
       </div>
     </div>
