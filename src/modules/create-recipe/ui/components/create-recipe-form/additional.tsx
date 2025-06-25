@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { recipeSchema, RecipeSchema } from "@/modules/create-recipe/schemas";
+import {
+  createRecipeSchema,
+  CreateRecipeSchema,
+} from "@/modules/create-recipe/schemas";
 import { uploadImage } from "@/modules/storage/server/upload-image";
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import React from "react";
 import { useFormContext } from "react-hook-form";
@@ -12,16 +15,24 @@ import { toast } from "sonner";
 
 export const RecipeFormAdditional = () => {
   const trpc = useTRPC();
-  const form = useFormContext<RecipeSchema>();
+  const form = useFormContext<CreateRecipeSchema>();
 
   const { data } = useSuspenseQuery(
     trpc.attributes.getAttributes.queryOptions()
   );
 
+  const { mutateAsync } = useMutation(
+    trpc.createRecipe.createRecipe.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    })
+  );
+
   const onError = () => {
     const values = form.getValues();
 
-    const validates = recipeSchema.safeParse(values);
+    const validates = createRecipeSchema.safeParse(values);
 
     if (!validates.success) {
       const issues = validates.error.issues.map((issue) => issue.message);
@@ -47,10 +58,38 @@ export const RecipeFormAdditional = () => {
     }
   };
 
-  const saveAsDraft = async (values: RecipeSchema) => {
+  const saveAsDraft = async (values: CreateRecipeSchema) => {
     const formData = new FormData();
     formData.append("image", values.image);
-    await uploadImage(formData);
+    const { data } = await uploadImage(formData);
+
+    if (!data) {
+      toast.error("Nie udało się przesłać obrazu. Spróbuj ponownie.");
+      return;
+    }
+
+    await mutateAsync({
+      ...values,
+      imageId: data.id,
+      published: false,
+    });
+  };
+
+  const saveAndPublish = async (values: CreateRecipeSchema) => {
+    const formData = new FormData();
+    formData.append("image", values.image);
+    const { data } = await uploadImage(formData);
+
+    if (!data) {
+      toast.error("Nie udało się przesłać obrazu. Spróbuj ponownie.");
+      return;
+    }
+
+    await mutateAsync({
+      ...values,
+      imageId: data.id,
+      published: true,
+    });
   };
 
   const attributesList = [
@@ -106,12 +145,17 @@ export const RecipeFormAdditional = () => {
           </div>
         ))}
         <div className="grid grid-cols-2 gap-4">
-          <Button variant="secondary" type="button" onClick={saveAsDraft}>
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={form.handleSubmit(saveAsDraft, onError)}
+          >
+            {isSubmitting && <Loader2 className="animate-spin" />}
             Zapisz jako wersję roboczą
           </Button>
           <Button
             type="button"
-            onClick={form.handleSubmit(saveAsDraft, onError)}
+            onClick={form.handleSubmit(saveAndPublish, onError)}
           >
             {isSubmitting && <Loader2 className="animate-spin" />}
             Opublikuj przepis

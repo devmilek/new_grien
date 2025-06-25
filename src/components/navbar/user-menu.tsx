@@ -2,12 +2,12 @@
 
 import {
   BoltIcon,
+  BookIcon,
   BookOpenIcon,
   ChevronDownIcon,
   FilePlus2Icon,
   Layers2Icon,
   LogOutIcon,
-  PinIcon,
   UserPenIcon,
 } from "lucide-react";
 
@@ -104,9 +104,11 @@ export const UserMenu = () => {
               <span>Utwórz przepis</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <PinIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Option 4</span>
+          <DropdownMenuItem asChild>
+            <Link href="/konto/przepisy">
+              <BookIcon size={16} className="opacity-60" aria-hidden="true" />
+              <span>Zarządzaj przepisami</span>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <UserPenIcon size={16} className="opacity-60" aria-hidden="true" />

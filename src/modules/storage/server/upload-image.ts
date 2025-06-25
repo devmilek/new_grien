@@ -53,7 +53,9 @@ export const uploadImage = async (formData: FormData) => {
     };
   }
 
-  const fileKey = `${uuid()}.webp`;
+  const id = uuid();
+
+  const fileKey = `${id}.webp`;
 
   try {
     const arrayBuffer = await image.arrayBuffer();
@@ -80,13 +82,15 @@ export const uploadImage = async (formData: FormData) => {
       })
     );
 
-    const dbImage = await db
+    const [dbImage] = await db
       .insert(files)
       .values({
+        id,
         name: image.name,
         key: fileKey,
         mimeType: "image/webp",
         size: optimizedBuffer.length,
+        uploadedBy: user.id,
       })
       .returning();
 

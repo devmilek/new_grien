@@ -17,7 +17,7 @@ export const ingredientSchema = z.object({
 
 export type IngredientSchema = z.infer<typeof ingredientSchema>;
 
-export const recipeSchema = z.object({
+export const createRecipeSchema = z.object({
   title: z.string().min(1, "Tytuł przepisu jest wymagany"),
   description: z
     .string()
@@ -65,9 +65,14 @@ export const recipeSchema = z.object({
     .max(20, "Maksymalnie 20 kroków przygotowania"),
 });
 
-// recipe schema without image validation
-export const recipeSchemaWithoutImage = recipeSchema.omit({
-  image: true,
-});
+// recipe schema without image validation but with imageId
+export const createRecipeSchemaServer = createRecipeSchema
+  .omit({
+    image: true,
+  })
+  .extend({
+    imageId: z.uuid(),
+    published: z.boolean(),
+  });
 
-export type RecipeSchema = z.infer<typeof recipeSchema>;
+export type CreateRecipeSchema = z.infer<typeof createRecipeSchema>;

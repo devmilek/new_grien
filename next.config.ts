@@ -7,6 +7,17 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "6mb",
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        hostname:
+          process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(
+            "https://",
+            ""
+          ).replace("http://", "") || "grien3.s3.eu-central-1.amazonaws.com",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

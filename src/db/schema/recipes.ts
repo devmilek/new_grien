@@ -1,4 +1,5 @@
 import {
+  boolean,
   numeric,
   pgEnum,
   pgTable,
@@ -8,9 +9,11 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { categories } from "./attributes";
-import { ingredients } from "./ingredients";
+import { attributes, categories } from "./attributes";
+import { ingredientAliases } from "./ingredients";
 import { files } from "./files";
+import { user } from "./users";
+import { relations } from "drizzle-orm";
 
 export const difficulties = ["easy", "medium", "hard"] as const;
 export type Difficulty = (typeof difficulties)[number];
@@ -20,15 +23,25 @@ export const recipes = pgTable("recipes", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull(),
   description: varchar("description", { length: 500 }).notNull(),
-  categoryId: uuid("category_id").references(() => categories.id, {
-    onDelete: "cascade",
-  }),
+  categoryId: uuid("category_id")
+    .references(() => categories.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  authorId: uuid("author_id")
+    .notNull()
+    .references(() => user.id, {
+      onDelete: "set null",
+    }),
   difficulty: difficultiesEnum("difficulty").notNull(),
   portions: smallint("portions").notNull(),
   preparationTime: smallint("preparation_time").notNull(),
-  fileId: uuid("file_id").references(() => files.id, {
-    onDelete: "cascade",
-  }),
+  fileId: uuid("file_id")
+    .references(() => files.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  published: boolean("published").notNull().default(false),
 
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
@@ -37,18 +50,36 @@ export const recipes = pgTable("recipes", {
     .$onUpdateFn(() => new Date()),
 });
 
+export const recipesRelations = relations(recipes, ({ one, many }) => ({
+  category: one(categories, {
+    fields: [recipes.categoryId],
+    references: [categories.id],
+  }),
+  attributes: many(recipeAttributes),
+  ingredients: many(recipeIngredients),
+  preparationSteps: many(preparationSteps),
+  file: one(files, {
+    fields: [recipes.fileId],
+    references: [files.id],
+  }),
+}));
+
 export type Recipe = typeof recipes.$inferSelect;
 export type InsertRecipe = typeof recipes.$inferInsert;
 
 export const recipeIngredients = pgTable(
   "recipe_ingredients",
   {
-    recipeId: uuid("recipe_id").references(() => recipes.id, {
-      onDelete: "cascade",
-    }),
-    ingredientId: uuid("ingredient_id").references(() => ingredients.id, {
-      onDelete: "cascade",
-    }),
+    recipeId: uuid("recipe_id")
+      .references(() => recipes.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    ingredientAlliasId: uuid("ingredient_allias_id")
+      .references(() => ingredientAliases.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
     quantity: numeric("quantity", {
       precision: 10,
       scale: 2,
@@ -56,7 +87,21 @@ export const recipeIngredients = pgTable(
     }).notNull(),
     unit: varchar("unit", { length: 50 }).notNull(),
   },
-  (t) => [primaryKey({ columns: [t.recipeId, t.ingredientId] })]
+  (t) => [primaryKey({ columns: [t.recipeId, t.ingredientAlliasId] })]
+);
+
+export const recipeIngredientsRelations = relations(
+  recipeIngredients,
+  ({ one }) => ({
+    recipe: one(recipes, {
+      fields: [recipeIngredients.recipeId],
+      references: [recipes.id],
+    }),
+    ingredientAlias: one(ingredientAliases, {
+      fields: [recipeIngredients.ingredientAlliasId],
+      references: [ingredientAliases.id],
+    }),
+  })
 );
 
 export type RecipeIngredient = typeof recipeIngredients.$inferSelect;
@@ -74,20 +119,52 @@ export const preparationSteps = pgTable("preparation_steps", {
   }),
 });
 
+export const preparationStepsRelations = relations(
+  preparationSteps,
+  ({ one }) => ({
+    recipe: one(recipes, {
+      fields: [preparationSteps.recipeId],
+      references: [recipes.id],
+    }),
+    file: one(files, {
+      fields: [preparationSteps.fileId],
+      references: [files.id],
+    }),
+  })
+);
+
 export type PreparationStep = typeof preparationSteps.$inferSelect;
 export type InsertPreparationStep = typeof preparationSteps.$inferInsert;
 
 export const recipeAttributes = pgTable(
   "recipe_attributes",
   {
-    recipeId: uuid("recipe_id").references(() => recipes.id, {
-      onDelete: "cascade",
-    }),
-    attributeId: uuid("attribute_id").references(() => categories.id, {
-      onDelete: "cascade",
-    }),
+    recipeId: uuid("recipe_id")
+      .references(() => recipes.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    attributeId: uuid("attribute_id")
+      .references(() => attributes.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
   },
   (t) => [primaryKey({ columns: [t.recipeId, t.attributeId] })]
+);
+
+export const recipeAttributesRelations = relations(
+  recipeAttributes,
+  ({ one }) => ({
+    recipe: one(recipes, {
+      fields: [recipeAttributes.recipeId],
+      references: [recipes.id],
+    }),
+    attribute: one(attributes, {
+      fields: [recipeAttributes.attributeId],
+      references: [attributes.id],
+    }),
+  })
 );
 
 export type RecipeAttribute = typeof recipeAttributes.$inferSelect;

@@ -5,10 +5,14 @@ import { formatBytes, useFileUpload } from "@/hooks/use-file-upload";
 import Image from "next/image";
 import { useEffect } from "react";
 import { MAX_FILE_SIZE, SUPPORTED_IMAGE_TYPES } from "../../config";
+import { File as DbFile } from "@/db/schema/files";
+import { getS3Url } from "@/lib/utils";
+import { useCreateRecipe } from "@/modules/create-recipe/context/create-recipe-context";
 
 interface FileUpload {
   value: File | null;
   onValueChange: (file: File | null) => void;
+  initialImage?: DbFile | null;
 }
 
 export default function Dropzone({ onValueChange, value }: FileUpload) {
@@ -28,6 +32,8 @@ export default function Dropzone({ onValueChange, value }: FileUpload) {
     maxSize: MAX_FILE_SIZE,
   });
 
+  const { initialImage, setInitialImage } = useCreateRecipe();
+
   // Synchronize internal files with external value prop
   useEffect(() => {
     if (files[0]?.file && files[0].file !== value) {
@@ -41,12 +47,15 @@ export default function Dropzone({ onValueChange, value }: FileUpload) {
       removeFile(files[0].id);
     }
     onValueChange(null);
+    setInitialImage(null);
   };
 
   // Use prop value for preview if available, otherwise use internal files
-  const previewUrl = value
-    ? URL.createObjectURL(value)
-    : files[0]?.preview || null;
+  const previewUrl = (() => {
+    if (value) return URL.createObjectURL(value);
+    if (initialImage) return getS3Url(initialImage.id);
+    return null;
+  })();
 
   return (
     <div className="flex flex-col gap-2">

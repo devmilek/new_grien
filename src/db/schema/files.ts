@@ -13,9 +13,12 @@ export const files = pgTable("files", {
   key: varchar("key", { length: 255 }).notNull(),
   mimeType: varchar("mime_type", { length: 255 }).notNull(),
   size: integer("size").notNull(),
-  uploadedBy: uuid("uploaded_by").references(() => user.id, {
-    onDelete: "restrict",
-  }),
+
+  uploadedBy: uuid("uploaded_by")
+    .references(() => user.id, {
+      onDelete: "restrict",
+    })
+    .notNull(),
 
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")

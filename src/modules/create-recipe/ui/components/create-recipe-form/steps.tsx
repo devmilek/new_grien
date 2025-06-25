@@ -7,13 +7,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { RecipeSchema } from "@/modules/create-recipe/schemas";
+import { CreateRecipeSchema } from "@/modules/create-recipe/schemas";
 import { XIcon } from "lucide-react";
 import React from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 export const RecipeFormSteps = () => {
-  const form = useFormContext<RecipeSchema>();
+  const form = useFormContext<CreateRecipeSchema>();
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,

@@ -4,4 +4,5 @@ export const SUPPORTED_IMAGE_TYPES = [
   "image/png",
   "image/webp",
   "image/jpg",
+  "image/avif",
 ];

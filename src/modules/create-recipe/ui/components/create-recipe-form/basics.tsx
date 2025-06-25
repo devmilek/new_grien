@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { RecipeSchema } from "@/modules/create-recipe/schemas";
+import { CreateRecipeSchema } from "@/modules/create-recipe/schemas";
 import React from "react";
 import { useFormContext } from "react-hook-form";
 import { CategorySelect } from "./fields/category-select";
@@ -17,7 +17,7 @@ import { TimeInput } from "./fields/time-input";
 import Dropzone from "@/modules/storage/ui/components/dropzone";
 
 export const RecipeFormBasics = () => {
-  const form = useFormContext<RecipeSchema>();
+  const form = useFormContext<CreateRecipeSchema>();
 
   return (
     <div className="max-w-3xl mx-auto">
