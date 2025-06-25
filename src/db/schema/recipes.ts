@@ -1,5 +1,6 @@
 import {
   boolean,
+  char,
   numeric,
   pgEnum,
   pgTable,
@@ -14,13 +15,19 @@ import { ingredientAliases } from "./ingredients";
 import { files } from "./files";
 import { user } from "./users";
 import { relations } from "drizzle-orm";
+import { customAlphabet } from "nanoid";
 
 export const difficulties = ["easy", "medium", "hard"] as const;
 export type Difficulty = (typeof difficulties)[number];
 export const difficultiesEnum = pgEnum("difficulty", difficulties);
 
+const nanoid = customAlphabet(
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+  16
+);
+
 export const recipes = pgTable("recipes", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: char("id", { length: 16 }).primaryKey().default(nanoid()),
   title: varchar("title", { length: 255 }).notNull(),
   description: varchar("description", { length: 500 }).notNull(),
   categoryId: uuid("category_id")
@@ -62,6 +69,10 @@ export const recipesRelations = relations(recipes, ({ one, many }) => ({
     fields: [recipes.fileId],
     references: [files.id],
   }),
+  author: one(user, {
+    fields: [recipes.authorId],
+    references: [user.id],
+  }),
 }));
 
 export type Recipe = typeof recipes.$inferSelect;
@@ -70,7 +81,9 @@ export type InsertRecipe = typeof recipes.$inferInsert;
 export const recipeIngredients = pgTable(
   "recipe_ingredients",
   {
-    recipeId: uuid("recipe_id")
+    recipeId: char("recipe_id", {
+      length: 16,
+    })
       .references(() => recipes.id, {
         onDelete: "cascade",
       })
@@ -109,7 +122,9 @@ export type InsertRecipeIngredient = typeof recipeIngredients.$inferInsert;
 
 export const preparationSteps = pgTable("preparation_steps", {
   id: uuid("id").primaryKey().defaultRandom(),
-  recipeId: uuid("recipe_id").references(() => recipes.id, {
+  recipeId: char("recipe_id", {
+    length: 16,
+  }).references(() => recipes.id, {
     onDelete: "cascade",
   }),
   stepNumber: smallint("step_number").notNull(),
@@ -139,7 +154,9 @@ export type InsertPreparationStep = typeof preparationSteps.$inferInsert;
 export const recipeAttributes = pgTable(
   "recipe_attributes",
   {
-    recipeId: uuid("recipe_id")
+    recipeId: char("recipe_id", {
+      length: 16,
+    })
       .references(() => recipes.id, {
         onDelete: "cascade",
       })
@@ -169,3 +186,26 @@ export const recipeAttributesRelations = relations(
 
 export type RecipeAttribute = typeof recipeAttributes.$inferSelect;
 export type InsertRecipeAttribute = typeof recipeAttributes.$inferInsert;
+
+export const recipeLikes = pgTable(
+  "likes",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, {
+        onDelete: "cascade",
+      }),
+    recipeId: char("recipe_id", {
+      length: 16,
+    })
+      .notNull()
+      .references(() => recipes.id, {
+        onDelete: "cascade",
+      }),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.userId, table.recipeId],
+    }),
+  ]
+);

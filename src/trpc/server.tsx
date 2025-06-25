@@ -8,6 +8,7 @@ import { createTRPCContext } from "./init";
 import { makeQueryClient } from "./query-client";
 import { appRouter } from "./routers/_app";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { notFound } from "next/navigation";
 
 export const getQueryClient = cache(makeQueryClient);
 export const trpc = createTRPCOptionsProxy({
@@ -37,4 +38,10 @@ export function prefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
   }
 }
 
-export const caller = appRouter.createCaller(createTRPCContext);
+export const caller = appRouter.createCaller(createTRPCContext, {
+  onError: ({ error }) => {
+    if (error.code === "NOT_FOUND") {
+      notFound();
+    }
+  },
+});

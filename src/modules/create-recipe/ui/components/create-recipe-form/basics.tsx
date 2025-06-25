@@ -83,7 +83,7 @@ export const RecipeFormBasics = () => {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Kategoria</FormLabel>
+                <FormLabel>Poziom trudności</FormLabel>
                 <FormControl>
                   <DifficultySelect {...field} />
                 </FormControl>

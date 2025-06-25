@@ -109,7 +109,7 @@ const UserRecipeCard = ({ data }: UserRecipeCardProps) => {
           </Link>
         </Button>
         <Button variant="outline" size="icon">
-          <Link href={`/przepis/${data.id}`}>
+          <Link href={`/przepisy/${data.id}`}>
             <EyeIcon />
           </Link>
         </Button>
