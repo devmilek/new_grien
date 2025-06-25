@@ -30,7 +30,8 @@ export const createRecipeSchema = z.object({
       error: "Zdjęcie przepisu jest wymagane",
     })
     .max(MAX_FILE_SIZE)
-    .mime(SUPPORTED_IMAGE_TYPES),
+    .mime(SUPPORTED_IMAGE_TYPES)
+    .optional(),
   difficulty: z.enum(difficulties, {
     error: "Wybierz poziom trudności przepisu",
   }),
@@ -76,3 +77,7 @@ export const createRecipeSchemaServer = createRecipeSchema
   });
 
 export type CreateRecipeSchema = z.infer<typeof createRecipeSchema>;
+
+export const editRecipeSchemaServer = createRecipeSchemaServer.extend({
+  id: z.uuid("Nieprawidłowy identyfikator przepisu"),
+});

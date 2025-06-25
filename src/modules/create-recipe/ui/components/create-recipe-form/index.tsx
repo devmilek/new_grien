@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { RecipeFormBasics } from "./basics";
@@ -23,7 +23,8 @@ interface CreateRecipeFormProps {
   initialData?: GetRecipe;
 }
 
-const CreateRecipeFormContent = ({ initialData }: CreateRecipeFormProps) => {
+const CreateRecipeFormContent = () => {
+  const { initialData, currentStep } = useCreateRecipe();
   const methods = useForm<CreateRecipeSchema>({
     resolver: zodResolver(createRecipeSchema),
     defaultValues: {
@@ -62,16 +63,6 @@ const CreateRecipeFormContent = ({ initialData }: CreateRecipeFormProps) => {
     },
   });
 
-  const { currentStep, setInitialImage } = useCreateRecipe();
-
-  useEffect(() => {
-    if (initialData?.file) {
-      setInitialImage(initialData?.file);
-    } else {
-      setInitialImage(null);
-    }
-  }, [initialData, setInitialImage]);
-
   return (
     <>
       <RecipeFormStepper />
@@ -91,8 +82,11 @@ const CreateRecipeFormContent = ({ initialData }: CreateRecipeFormProps) => {
 
 export const CreateRecipeForm = ({ initialData }: CreateRecipeFormProps) => {
   return (
-    <CreateRecipeProvider>
-      <CreateRecipeFormContent initialData={initialData} />
+    <CreateRecipeProvider
+      initialData={initialData}
+      initialImage={initialData?.file}
+    >
+      <CreateRecipeFormContent />
     </CreateRecipeProvider>
   );
 };

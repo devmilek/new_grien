@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { useCreateRecipe } from "@/modules/create-recipe/context/create-recipe-context";
 import {
   createRecipeSchema,
   CreateRecipeSchema,
@@ -9,20 +11,31 @@ import { uploadImage } from "@/modules/storage/server/upload-image";
 import { useTRPC } from "@/trpc/client";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 
 export const RecipeFormAdditional = () => {
   const trpc = useTRPC();
+  const router = useRouter();
   const form = useFormContext<CreateRecipeSchema>();
+  const { initialData } = useCreateRecipe();
 
   const { data } = useSuspenseQuery(
     trpc.attributes.getAttributes.queryOptions()
   );
 
-  const { mutateAsync } = useMutation(
+  const createRecipe = useMutation(
     trpc.createRecipe.createRecipe.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    })
+  );
+
+  const editRecipe = useMutation(
+    trpc.createRecipe.editRecipe.mutationOptions({
       onError: (error) => {
         toast.error(error.message);
       },
@@ -59,37 +72,78 @@ export const RecipeFormAdditional = () => {
   };
 
   const saveAsDraft = async (values: CreateRecipeSchema) => {
-    const formData = new FormData();
-    formData.append("image", values.image);
-    const { data } = await uploadImage(formData);
+    if (!initialData) {
+      if (!values.image) {
+        toast.error("Zdjęcie przepisu jest wymagane.");
+        return;
+      }
 
-    if (!data) {
-      toast.error("Nie udało się przesłać obrazu. Spróbuj ponownie.");
-      return;
+      // CREATE MODE
+      const formData = new FormData();
+      formData.append("image", values.image);
+      const { data } = await uploadImage(formData);
+      if (!data) {
+        toast.error("Nie udało się przesłać obrazu. Spróbuj ponownie.");
+        return;
+      }
+      const { recipeId } = await createRecipe.mutateAsync({
+        ...values,
+        imageId: data.id,
+        published: true,
+      });
+
+      toast.success("Przepis został zapisany jako wersja robocza.");
+      router.push(`/utworz-przepis/${recipeId}`);
     }
-
-    await mutateAsync({
-      ...values,
-      imageId: data.id,
-      published: false,
-    });
   };
-
   const saveAndPublish = async (values: CreateRecipeSchema) => {
-    const formData = new FormData();
-    formData.append("image", values.image);
-    const { data } = await uploadImage(formData);
+    if (initialData) {
+      // EDIT MODE
+      let imageId;
 
-    if (!data) {
-      toast.error("Nie udało się przesłać obrazu. Spróbuj ponownie.");
-      return;
+      if (values.image) {
+        const formData = new FormData();
+        formData.append("image", values.image);
+        const { data } = await uploadImage(formData);
+
+        if (!data) {
+          toast.error("Nie udało się przesłać obrazu. Spróbuj ponownie.");
+          return;
+        }
+        imageId = data.id;
+      }
+
+      await editRecipe.mutateAsync({
+        ...values,
+        id: initialData.id,
+        imageId: imageId || initialData.file?.id,
+        published: initialData.published,
+      });
+
+      toast.success("Przepis został zapisany.");
+      router.refresh();
+    } else {
+      if (!values.image) {
+        toast.error("Zdjęcie przepisu jest wymagane.");
+        return;
+      }
+
+      // CREATE MODE
+      const formData = new FormData();
+      formData.append("image", values.image);
+      const { data } = await uploadImage(formData);
+      if (!data) {
+        toast.error("Nie udało się przesłać obrazu. Spróbuj ponownie.");
+        return;
+      }
+      const { recipeId } = await createRecipe.mutateAsync({
+        ...values,
+        imageId: data.id,
+        published: true,
+      });
+
+      router.push(`/przepis/${recipeId}`);
     }
-
-    await mutateAsync({
-      ...values,
-      imageId: data.id,
-      published: true,
-    });
   };
 
   const attributesList = [
@@ -144,21 +198,25 @@ export const RecipeFormAdditional = () => {
             </div>
           </div>
         ))}
-        <div className="grid grid-cols-2 gap-4">
+        <div className={cn("flex gap-4")}>
+          {!initialData && (
+            <Button
+              variant="secondary"
+              type="button"
+              className="flex-1"
+              onClick={form.handleSubmit(saveAsDraft, onError)}
+            >
+              {isSubmitting && <Loader2 className="animate-spin" />}
+              Zapisz jako wersję roboczą
+            </Button>
+          )}
           <Button
-            variant="secondary"
             type="button"
-            onClick={form.handleSubmit(saveAsDraft, onError)}
-          >
-            {isSubmitting && <Loader2 className="animate-spin" />}
-            Zapisz jako wersję roboczą
-          </Button>
-          <Button
-            type="button"
+            className="flex-1"
             onClick={form.handleSubmit(saveAndPublish, onError)}
           >
             {isSubmitting && <Loader2 className="animate-spin" />}
-            Opublikuj przepis
+            {initialData ? "Zapisz przepis" : "Utwórz i opublikuj"}
           </Button>
         </div>
       </div>

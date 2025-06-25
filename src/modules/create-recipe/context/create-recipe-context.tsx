@@ -1,5 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { File as DbFile } from "@/db/schema";
+import { GetRecipe } from "../types";
 
 interface CreateRecipeContextType {
   steps: { step: number; title: string }[];
@@ -7,12 +8,24 @@ interface CreateRecipeContextType {
   setCurrentStep: (step: number) => void;
   initialImage: DbFile | null;
   setInitialImage: (image: DbFile | null) => void;
+  initialData: GetRecipe | null;
+  setInitialData: (data: GetRecipe | null) => void;
 }
 
 const CreateRecipeContext = createContext<CreateRecipeContextType | null>(null);
 
-// Provider komponent
-const CreateRecipeProvider = ({ children }: { children: React.ReactNode }) => {
+// Dodaj props do Provider
+interface CreateRecipeProviderProps {
+  children: React.ReactNode;
+  initialData?: GetRecipe | null;
+  initialImage?: DbFile | null;
+}
+
+const CreateRecipeProvider = ({
+  children,
+  initialData: propInitialData,
+  initialImage: propInitialImage,
+}: CreateRecipeProviderProps) => {
   const steps = [
     {
       step: 1,
@@ -33,7 +46,27 @@ const CreateRecipeProvider = ({ children }: { children: React.ReactNode }) => {
   ];
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [initialImage, setInitialImage] = useState<DbFile | null>(null);
+
+  // Inicjalizuj state z props
+  const [initialImage, setInitialImage] = useState<DbFile | null>(
+    propInitialImage || null
+  );
+  const [initialData, setInitialData] = useState<GetRecipe | null>(
+    propInitialData || null
+  );
+
+  // Aktualizuj state gdy props się zmienią
+  useEffect(() => {
+    if (propInitialData !== undefined) {
+      setInitialData(propInitialData);
+    }
+  }, [propInitialData]);
+
+  useEffect(() => {
+    if (propInitialImage !== undefined) {
+      setInitialImage(propInitialImage);
+    }
+  }, [propInitialImage]);
 
   const value = {
     steps,
@@ -41,6 +74,8 @@ const CreateRecipeProvider = ({ children }: { children: React.ReactNode }) => {
     setCurrentStep,
     initialImage,
     setInitialImage,
+    initialData,
+    setInitialData,
   };
 
   return (
@@ -50,7 +85,6 @@ const CreateRecipeProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// Hook do używania kontekstu
 const useCreateRecipe = () => {
   const context = useContext(CreateRecipeContext);
   if (!context) {
@@ -61,5 +95,4 @@ const useCreateRecipe = () => {
   return context;
 };
 
-// Eksportowanie
 export { CreateRecipeProvider, useCreateRecipe };

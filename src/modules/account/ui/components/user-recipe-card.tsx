@@ -65,6 +65,9 @@ const UserRecipeCard = ({ data }: UserRecipeCardProps) => {
           {data.description}
         </p>
         <div className="flex gap-2 flex-wrap">
+          <Badge variant="secondary">
+            {data.published ? "Opublikowany" : "Wersja robocza"}
+          </Badge>
           {badges.map((badge, index) => (
             <Badge key={index} variant="outline">
               <badge.icon />

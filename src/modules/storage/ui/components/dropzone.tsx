@@ -10,7 +10,7 @@ import { getS3Url } from "@/lib/utils";
 import { useCreateRecipe } from "@/modules/create-recipe/context/create-recipe-context";
 
 interface FileUpload {
-  value: File | null;
+  value: File | null | undefined;
   onValueChange: (file: File | null) => void;
   initialImage?: DbFile | null;
 }

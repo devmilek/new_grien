@@ -109,7 +109,7 @@ export const RecipeFormBasics = () => {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Liczba porcji</FormLabel>
+                <FormLabel>Czas przygotowania</FormLabel>
                 <FormControl>
                   <TimeInput {...field} />
                 </FormControl>
