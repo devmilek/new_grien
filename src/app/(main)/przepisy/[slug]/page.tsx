@@ -1,8 +1,8 @@
 import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { getIdFromSlug, getRecipeSlug } from "@/lib/utils";
 import { GetRecipe } from "@/modules/recipe-details/types";
 import { RecipeDetailsView } from "@/modules/recipe-details/ui/views/recipe-details-view";
 import { caller } from "@/trpc/server";
-import slugify from "@sindresorhus/slugify";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { notFound, redirect, RedirectType } from "next/navigation";
 import React from "react";
@@ -10,15 +10,6 @@ import React from "react";
 interface RecipePageProps {
   params: Promise<{ slug: string }>;
 }
-
-const getIdFromSlug = (slug: string): string | null => {
-  const match = slug.match(/-([a-zA-Z0-9]{10,})$/);
-  return match ? match[1] : null;
-};
-
-const getRecipeSlug = (id: string, title: string) => {
-  return `${slugify(title)}-${id}`;
-};
 
 const RecipePage = async ({ params }: RecipePageProps) => {
   const { user } = await getCurrentSession();

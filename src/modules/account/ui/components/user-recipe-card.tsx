@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { formatDifficulty } from "@/lib/formatters";
-import { getS3Url } from "@/lib/utils";
+import { getRecipeSlug, getS3Url } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -108,8 +108,8 @@ const UserRecipeCard = ({ data }: UserRecipeCardProps) => {
             <PenIcon />
           </Link>
         </Button>
-        <Button variant="outline" size="icon">
-          <Link href={`/przepisy/${data.id}`}>
+        <Button variant="outline" size="icon" asChild>
+          <Link href={`/przepisy/${getRecipeSlug(data.id, data.title)}`}>
             <EyeIcon />
           </Link>
         </Button>

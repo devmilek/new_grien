@@ -24,6 +24,17 @@ export const recipeDetailsRouter = createTRPCRouter({
             name: true,
           },
         },
+        preparationSteps: true,
+        ingredients: {
+          with: {
+            ingredientAlias: {
+              columns: {
+                alias: true,
+                id: true,
+              },
+            },
+          },
+        },
         attributes: {
           with: {
             attribute: {

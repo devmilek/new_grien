@@ -79,5 +79,5 @@ export const createRecipeSchemaServer = createRecipeSchema
 export type CreateRecipeSchema = z.infer<typeof createRecipeSchema>;
 
 export const editRecipeSchemaServer = createRecipeSchemaServer.extend({
-  id: z.uuid("Nieprawidłowy identyfikator przepisu"),
+  id: z.string("Nieprawidłowy identyfikator przepisu"),
 });
