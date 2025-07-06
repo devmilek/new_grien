@@ -3,10 +3,15 @@ import {
   ClockIcon,
   SliceIcon,
   TagIcon,
-  TagsIcon,
 } from "lucide-react";
-import { formatDifficulty } from "@/lib/formatters";
+import {
+  formatAttributeIcon,
+  formatAttributeType,
+  formatDifficulty,
+  formatTime,
+} from "@/lib/formatters";
 import { GetRecipe } from "./types";
+import { pluralizePortions } from "@/lib/pluralize";
 
 export const getRecipeBadges = (data: GetRecipe) => {
   const cuisinesAttributes = data.attributes.filter(
@@ -25,48 +30,55 @@ export const getRecipeBadges = (data: GetRecipe) => {
     {
       icon: ChartNoAxesColumnDecreasing,
       label: formatDifficulty(data.difficulty),
+      tooltip: "Poziom trudności",
     },
     {
       icon: TagIcon,
       label: data.category.name,
+      tooltip: "Kategoria",
     },
     {
       icon: ClockIcon,
-      label: `${data.preparationTime} min`,
+      label: formatTime(data.preparationTime),
+      tooltip: "Czas przygotowania",
     },
     {
       icon: SliceIcon,
-      label: `${data.portions} ${data.portions === 1 ? "porcja" : "porcji"}`,
+      label: pluralizePortions(data.portions),
+      tooltip: "Ilość porcji",
     },
   ];
 
   // Helper function to avoid code duplication
   const addAttributeBadges = (
     attributes: typeof cuisinesAttributes,
-    type: string,
-    singularSuffix: string,
     pluralSuffix: string
   ) => {
     if (attributes.length > 0) {
       if (attributes.length > 2) {
         badges.push({
-          icon: TagsIcon,
+          icon: formatAttributeIcon(attributes[0].attribute.type),
           label: `${attributes.length} ${pluralSuffix}`,
+          tooltip:
+            formatAttributeType(attributes[0].attribute.type) +
+            " " +
+            attributes.join(", "),
         });
       } else {
         attributes.forEach((attr) => {
           badges.push({
-            icon: TagsIcon,
+            icon: formatAttributeIcon(attr.attribute.type),
             label: attr.attribute.name,
+            tooltip: formatAttributeType(attr.attribute.type),
           });
         });
       }
     }
   };
 
-  addAttributeBadges(cuisinesAttributes, "cuisines", "kuchni", "kuchni");
-  addAttributeBadges(dietsAttributes, "diets", "dieta", "diet");
-  addAttributeBadges(occasionsAttributes, "occasions", "okazja", "okazji");
+  addAttributeBadges(cuisinesAttributes, "cuisines");
+  addAttributeBadges(dietsAttributes, "diets");
+  addAttributeBadges(occasionsAttributes, "occasions");
 
   return badges;
 };

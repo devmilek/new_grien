@@ -7,7 +7,12 @@ import {
   TagIcon,
   TagsIcon,
 } from "lucide-react";
-import { formatDifficulty } from "@/lib/formatters";
+import {
+  formatAttributeIcon,
+  formatAttributeType,
+  formatDifficulty,
+  formatTime,
+} from "@/lib/formatters";
 import Image from "next/image";
 import { getRecipeSlug, getS3Url } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +21,12 @@ import { GeneratedAvatar } from "@/components/generated-avatar";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
+import { pluralizeAttributes, pluralizePortions } from "@/lib/pluralize";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const FilteredRecipeCard = ({
   data,
@@ -26,24 +37,40 @@ export const FilteredRecipeCard = ({
     {
       icon: ChartNoAxesColumnDecreasing,
       label: formatDifficulty(data.difficulty),
+      tooltip: "Poziom trudności",
     },
     {
       icon: TagIcon,
       label: data.category.name,
+      tooltip: "Kategoria",
     },
     {
       icon: ClockIcon,
-      label: `${data.preparationTime} min`,
+      label: formatTime(data.preparationTime),
+      tooltip: "Czas przygotowania",
     },
     {
       icon: SliceIcon,
-      label: `${data.portions} ${data.portions === 1 ? "porcja" : "porcji"}`,
-    },
-    {
-      icon: TagsIcon,
-      label: data.attributes.length + " atrybutów",
+      label: pluralizePortions(data.portions),
+      tooltip: "Ilość porcji",
     },
   ];
+
+  if (data.attributes.length > 3) {
+    badges.push({
+      icon: TagsIcon,
+      label: pluralizeAttributes(data.attributes.length),
+      tooltip: "Atrybuty",
+    });
+  } else {
+    data.attributes.forEach((attribute) => {
+      badges.push({
+        icon: formatAttributeIcon(attribute.attribute.type),
+        label: attribute.attribute.name,
+        tooltip: formatAttributeType(attribute.attribute.type),
+      });
+    });
+  }
 
   return (
     <div className="bg-background flex items-center gap-8 group">
@@ -55,7 +82,7 @@ export const FilteredRecipeCard = ({
           src={getS3Url(data.file.key)}
           fill
           alt={data.title}
-          className="object-cover"
+          className="object-cover group-hover:scale-105 transition-transform"
         />
       </Link>
 
@@ -82,10 +109,15 @@ export const FilteredRecipeCard = ({
 
         <div className="flex gap-2 flex-wrap">
           {badges.map((badge, index) => (
-            <Badge key={index} variant="outline">
-              <badge.icon />
-              {badge.label}
-            </Badge>
+            <Tooltip key={index}>
+              <TooltipTrigger asChild>
+                <Badge key={index} variant="outline">
+                  <badge.icon />
+                  {badge.label}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>{badge.tooltip}</TooltipContent>
+            </Tooltip>
           ))}
         </div>
 

@@ -9,6 +9,11 @@ import { pl } from "date-fns/locale/pl";
 import { Badge } from "@/components/ui/badge";
 import { getRecipeBadges } from "../../utils";
 import { RecipeActions } from "../components/recipe-actions";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const RecipeHero = ({ data }: { data: GetRecipe }) => {
   const badges = getRecipeBadges(data);
@@ -20,7 +25,7 @@ export const RecipeHero = ({ data }: { data: GetRecipe }) => {
       </div>
       <div className="flex flex-col">
         <h1 className="text-3xl font-display">{data.title}</h1>
-        <div className="flex items-center mt-4 gap-1 text-sm text-muted-foreground">
+        <div className="flex items-center mt-4 text-sm text-muted-foreground">
           <Link href="/" className="flex items-center gap-2">
             <GeneratedAvatar seed={data.author.name} className="size-8" />
             <span className="text-primary font-semibold text-sm">
@@ -37,10 +42,15 @@ export const RecipeHero = ({ data }: { data: GetRecipe }) => {
         </div>
         <div className="flex flex-wrap gap-2 mt-4">
           {badges.map((badge, index) => (
-            <Badge key={index} variant="outline">
-              <badge.icon />
-              {badge.label}
-            </Badge>
+            <Tooltip key={index}>
+              <TooltipTrigger asChild>
+                <Badge key={index} variant="outline">
+                  <badge.icon />
+                  {badge.label}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>{badge.tooltip}</TooltipContent>
+            </Tooltip>
           ))}
         </div>
         <p className="text-muted-foreground flex-1 mt-4 pb-4">

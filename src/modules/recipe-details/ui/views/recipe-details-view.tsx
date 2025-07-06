@@ -22,7 +22,7 @@ export const RecipeDetailsView = ({ data }: { data: GetRecipe }) => {
         </Alert>
       )}
       <RecipeHero data={data} />
-      <div className="flex gap-8 items-start">
+      <div className="flex gap-4 items-start">
         <div className="@container flex-1 space-y-8">
           <div className="p-6 rounded-2xl bg-background border">
             {data.preparationSteps.map((step, index) => (
@@ -41,7 +41,7 @@ export const RecipeDetailsView = ({ data }: { data: GetRecipe }) => {
           </div>
           <CommentsCard recipeId={data.id} />
         </div>
-        <div className="w-[320px]">
+        <div className="max-w-[360px] w-full">
           <IngredientsCard ingredients={data.ingredients} />
         </div>
       </div>

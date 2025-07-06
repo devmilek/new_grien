@@ -116,7 +116,7 @@ export const Footer = () => {
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-center md:text-left max-w-3xl">
+          <div className="text-center md:text-left max-w-2xl">
             <p className="text-xs text-muted-foreground mb-2">
               © 2025 Grien. Część przepisów jest opublikowana zgodnie z licencją
               Creative Commons. Nieoznaczone tą licencją przepisy należą do ich

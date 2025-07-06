@@ -14,7 +14,7 @@ import {
   TrashIcon,
 } from "lucide-react";
 import Image from "next/image";
-import { formatDifficulty } from "@/lib/formatters";
+import { formatDifficulty, formatTime } from "@/lib/formatters";
 import { getRecipeSlug, getS3Url } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ import Link from "next/link";
 import { useTRPC } from "@/trpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { pluralizeAttributes, pluralizePortions } from "@/lib/pluralize";
 
 interface UserRecipeCardProps {
   data: GerUserRecipes[number];
@@ -56,15 +57,15 @@ const UserRecipeCard = ({ data }: UserRecipeCardProps) => {
     },
     {
       icon: ClockIcon,
-      label: `${data.preparationTime} min`,
+      label: formatTime(data.preparationTime),
     },
     {
       icon: SliceIcon,
-      label: `${data.portions} ${data.portions === 1 ? "porcja" : "porcji"}`,
+      label: pluralizePortions(data.portions),
     },
     {
       icon: TagsIcon,
-      label: data.attributes.length + " atrybutów",
+      label: pluralizeAttributes(data.attributes.length),
     },
   ];
   return (
