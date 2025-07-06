@@ -41,7 +41,7 @@ const CreateRecipeFormContent = () => {
           name: ingredient.ingredientAlias.alias,
         },
         quantity: ingredient.quantity,
-        unit: ingredient.unit,
+        unit: ingredient.unit || undefined,
       })) || [
         {
           ingredient: { id: "", name: "" },

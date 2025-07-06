@@ -6,7 +6,6 @@ import {
   FilteredRecipeCard,
   FilteredRecipeCardSkeleton,
 } from "@/modules/recipes-filtering/ui/components/filtered-recipe-card";
-import { SortButton } from "@/modules/recipes-filtering/ui/components/sort-button";
 import { useTRPC } from "@/trpc/client";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
@@ -48,7 +47,6 @@ export const LatestRecipesSection = () => {
     <div className="border p-6 bg-white rounded-2xl flex-1">
       <header className="flex items-center justify-between">
         <h2 className="text-2xl font-display">Wyniki</h2>
-        <SortButton />
       </header>
       <div className="space-y-6 mt-5">
         {recipes.map((recipe) => (

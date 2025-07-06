@@ -30,7 +30,7 @@ const RecipePage = async ({ params }: RecipePageProps) => {
       notFound();
     }
 
-    if (user?.id !== recipe.authorId) {
+    if (!recipe.published && (!user || user.id !== recipe.authorId)) {
       notFound();
     }
 

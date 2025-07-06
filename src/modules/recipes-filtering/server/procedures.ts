@@ -5,12 +5,12 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/contstants";
 import { db } from "@/db";
 import { and, eq, inArray, exists } from "drizzle-orm";
 import {
-  Attribute,
   attributes as dbAttributes,
   categories,
   Category,
   recipes,
   recipeAttributes,
+  Attribute,
 } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 

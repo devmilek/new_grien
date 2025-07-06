@@ -1,13 +1,12 @@
 "use client";
 
 import {
-  BoltIcon,
   BookIcon,
   BookOpenIcon,
   ChevronDownIcon,
   FilePlus2Icon,
-  Layers2Icon,
   LogOutIcon,
+  UserIcon,
   UserPenIcon,
 } from "lucide-react";
 
@@ -82,17 +81,19 @@ export const UserMenu = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             <BoltIcon size={16} className="opacity-60" aria-hidden="true" />
             <span>Option 1</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Layers2Icon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Option 2</span>
+          </DropdownMenuItem> */}
+          <DropdownMenuItem asChild>
+            <Link href={`/kucharze/${data.user.username}`}>
+              <UserIcon size={16} className="opacity-60" aria-hidden="true" />
+              Profil
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <BookOpenIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Option 3</span>
+            <span>Kolekcje</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -115,7 +116,7 @@ export const UserMenu = () => {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <UserPenIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Option 5</span>
+            <span>Ustawienia konta</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

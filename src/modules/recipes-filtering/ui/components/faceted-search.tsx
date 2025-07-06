@@ -6,10 +6,10 @@ import React, { useCallback } from "react";
 import { Accordion } from "../../../../components/ui/accordion";
 import { useRecipesFilters } from "../../hooks/use-recipes-filters";
 import { FilterSection } from "./filter-section";
-import { TAttribute } from "@/db/schema";
+import { Attribute } from "@/db/schema";
 
 interface FacetedSearchProps {
-  hideAttribute?: TAttribute["type"] | "categories";
+  hideAttribute?: Attribute["type"] | "categories";
 }
 
 export const FacetedSearch = ({ hideAttribute }: FacetedSearchProps) => {

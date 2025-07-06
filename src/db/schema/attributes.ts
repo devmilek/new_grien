@@ -38,5 +38,5 @@ export const attributes = pgTable("attributes", {
   }).notNull(),
 });
 
-export type TAttribute = typeof attributes.$inferSelect;
+export type Attribute = typeof attributes.$inferSelect;
 export type AttributeInsert = typeof attributes.$inferInsert;

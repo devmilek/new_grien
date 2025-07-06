@@ -1,6 +1,6 @@
 import { DEFAULT_PAGE } from "@/contstants";
 import { db } from "@/db";
-import { attributes, recipeAttributes, TAttribute } from "@/db/schema";
+import { Attribute, attributes, recipeAttributes } from "@/db/schema";
 import { loadRecipesSearchParams } from "@/modules/recipes-filtering/params";
 import { FacetedSearch } from "@/modules/recipes-filtering/ui/components/faceted-search";
 import {
@@ -17,10 +17,10 @@ import React, { Suspense } from "react";
 interface AttributePageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<SearchParams>;
-  attributeType: TAttribute["type"];
+  attributeType: Attribute["type"];
 }
 
-const subheadingMap: Record<TAttribute["type"], string> = {
+const subheadingMap: Record<Attribute["type"], string> = {
   diets: "przepisów w tej diecie",
   cuisines: "przepisów w tej kuchni",
   occasions: "przepisów na tę okazję",
