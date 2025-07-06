@@ -1,3 +1,4 @@
+import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import React from "react";
@@ -9,8 +10,9 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
     <>
       <HydrateClient>
         <Navbar />
+        <main className="pt-20 pb-10">{children}</main>
+        <Footer />
       </HydrateClient>
-      <main className="pt-20 pb-10">{children}</main>
     </>
   );
 };

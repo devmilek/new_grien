@@ -1,3 +1,9 @@
+import { HomeView } from "@/modules/home/ui/views/home-view";
+
 export default function Home() {
-  return <div></div>;
+  return (
+    <div className="container">
+      <HomeView />
+    </div>
+  );
 }
