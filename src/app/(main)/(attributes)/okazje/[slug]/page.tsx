@@ -1,4 +1,4 @@
-import AttributePage from "@/modules/attributes/ui/AttributePage";
+import AttributePage from "@/modules/attributes/ui/views/attribute-view";
 import { SearchParams } from "nuqs";
 
 interface PageProps {

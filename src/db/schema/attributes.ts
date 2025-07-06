@@ -1,6 +1,6 @@
 import { pgEnum, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 
-export const attributeTypes = ["cuisines", "diets", "occasions", "categories"] as const;
+export const attributeTypes = ["cuisines", "diets", "occasions"] as const;
 export type AttributeType = (typeof attributeTypes)[number];
 export const attributesTypesEnum = pgEnum("attribute_type", attributeTypes);
 

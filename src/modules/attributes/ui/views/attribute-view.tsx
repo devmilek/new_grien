@@ -24,7 +24,6 @@ const subheadingMap: Record<TAttribute["type"], string> = {
   diets: "przepisów w tej diecie",
   cuisines: "przepisów w tej kuchni",
   occasions: "przepisów na tę okazję",
-  categories: "przepisów w tej kategorii",
 };
 
 const AttributePage = async ({

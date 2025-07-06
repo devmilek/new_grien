@@ -1,4 +1,4 @@
-import AttributePage from "@/modules/attributes/ui/AttributePage";
+import CategoryPage from "@/modules/attributes/ui/views/category-view";
 import { SearchParams } from "nuqs";
 
 interface PageProps {
@@ -6,14 +6,8 @@ interface PageProps {
   searchParams: Promise<SearchParams>;
 }
 
-const CategoryPage = async ({ params, searchParams }: PageProps) => {
-  return (
-    <AttributePage
-      params={params}
-      searchParams={searchParams}
-      attributeType="categories"
-    />
-  );
+const CategorySlugPage = async ({ params, searchParams }: PageProps) => {
+  return <CategoryPage params={params} searchParams={searchParams} />;
 };
 
-export default CategoryPage;
+export default CategorySlugPage;
