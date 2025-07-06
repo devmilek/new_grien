@@ -44,33 +44,42 @@ export const FilteredRecipeCard = ({
       label: data.attributes.length + " atrybutów",
     },
   ];
+
   return (
-    <Link
-      href={`/przepisy/${getRecipeSlug(data.id, data.title)}`}
-      key={data.id}
-      className="bg-background flex items-center gap-8 group"
-    >
-      <div className="relative aspect-[4/3] w-80 bg-muted rounded-xl overflow-hidden border">
+    <div className="bg-background flex items-center gap-8 group">
+      <Link
+        href={`/przepisy/${getRecipeSlug(data.id, data.title)}`}
+        className="relative aspect-[4/3] w-80 bg-muted rounded-xl overflow-hidden border block"
+      >
         <Image
           src={getS3Url(data.file.key)}
           fill
           alt={data.title}
           className="object-cover"
         />
-      </div>
+      </Link>
+
       <div className="flex-1">
         <Link
           href={`/kategorie/${data.category.slug}`}
-          className="text-sm text-primary font-medium hover:underline"
+          className="text-sm text-primary font-medium hover:underline inline-block mb-2"
         >
           {data.category.name}
         </Link>
-        <h2 className="text-2xl font-display group-hover:underline">
-          {data.title}
-        </h2>
+
+        <Link
+          href={`/przepisy/${getRecipeSlug(data.id, data.title)}`}
+          className="block"
+        >
+          <h2 className="text-2xl font-display group-hover:underline">
+            {data.title}
+          </h2>
+        </Link>
+
         <p className="line-clamp-2 mt-3 mb-4 text-muted-foreground text-sm">
           {data.description}
         </p>
+
         <div className="flex gap-2 flex-wrap">
           {badges.map((badge, index) => (
             <Badge key={index} variant="outline">
@@ -79,6 +88,7 @@ export const FilteredRecipeCard = ({
             </Badge>
           ))}
         </div>
+
         <div className="flex items-center text-sm text-muted-foreground mt-4">
           <Link href="/" className="flex items-center gap-2">
             <GeneratedAvatar seed={data.author.name} className="size-8" />
@@ -95,7 +105,7 @@ export const FilteredRecipeCard = ({
           </time>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 

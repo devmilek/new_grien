@@ -1,6 +1,6 @@
 import { pgEnum, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 
-export const attributeTypes = ["cuisines", "diets", "occasions"] as const;
+export const attributeTypes = ["cuisines", "diets", "occasions", "categories"] as const;
 export type AttributeType = (typeof attributeTypes)[number];
 export const attributesTypesEnum = pgEnum("attribute_type", attributeTypes);
 
@@ -38,5 +38,5 @@ export const attributes = pgTable("attributes", {
   }).notNull(),
 });
 
-export type Attribute = typeof attributes.$inferSelect;
+export type TAttribute = typeof attributes.$inferSelect;
 export type AttributeInsert = typeof attributes.$inferInsert;

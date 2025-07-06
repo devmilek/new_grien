@@ -6,20 +6,13 @@ import React, { useCallback } from "react";
 import { Accordion } from "../../../../components/ui/accordion";
 import { useRecipesFilters } from "../../hooks/use-recipes-filters";
 import { FilterSection } from "./filter-section";
+import { TAttribute } from "@/db/schema";
 
 interface FacetedSearchProps {
-  hideCategories?: boolean;
-  hideCuisines?: boolean;
-  hideOccasions?: boolean;
-  hideDiets?: boolean;
+  hideAttribute?: TAttribute["type"] | "categories";
 }
 
-export const FacetedSearch = ({
-  hideCategories,
-  hideCuisines,
-  hideDiets,
-  hideOccasions,
-}: FacetedSearchProps) => {
+export const FacetedSearch = ({ hideAttribute }: FacetedSearchProps) => {
   const trpc = useTRPC();
   const { data: categories } = useSuspenseQuery(
     trpc.attributes.getCategories.queryOptions()
@@ -56,7 +49,7 @@ export const FacetedSearch = ({
 
   // Konfiguracja sekcji filtrów
   const filterSections = [
-    ...(hideCategories
+    ...(hideAttribute === "categories"
       ? []
       : [
           {
@@ -67,7 +60,7 @@ export const FacetedSearch = ({
             isMultiSelect: false,
           },
         ]),
-    ...(hideCuisines
+    ...(hideAttribute === "cuisines"
       ? []
       : [
           {
@@ -78,7 +71,7 @@ export const FacetedSearch = ({
             isMultiSelect: true,
           },
         ]),
-    ...(hideOccasions
+    ...(hideAttribute === "occasions"
       ? []
       : [
           {
@@ -89,7 +82,7 @@ export const FacetedSearch = ({
             isMultiSelect: true,
           },
         ]),
-    ...(hideDiets
+    ...(hideAttribute === "diets"
       ? []
       : [
           {
