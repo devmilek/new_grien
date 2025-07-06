@@ -16,7 +16,7 @@ export const RecipeHero = ({ data }: { data: GetRecipe }) => {
   return (
     <div className="p-6 rounded-2xl border bg-background grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
-        <Image src={getS3Url(data.fileId)} fill alt={data.title} />
+        <Image src={getS3Url(data.file.key)} fill alt={data.title} />
       </div>
       <div className="flex flex-col">
         <h1 className="text-3xl font-display">{data.title}</h1>

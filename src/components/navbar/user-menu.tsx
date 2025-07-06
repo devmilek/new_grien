@@ -60,7 +60,10 @@ export const UserMenu = () => {
           variant="ghost"
           className="h-auto p-0 hover:bg-transparent group"
         >
-          <GeneratedAvatar seed={data?.user.name} />
+          <GeneratedAvatar
+            seed={data?.user.name}
+            verified={data?.user.verified}
+          />
           <ChevronDownIcon
             size={16}
             className="opacity-60"

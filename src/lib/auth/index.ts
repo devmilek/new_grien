@@ -16,4 +16,13 @@ export const auth = betterAuth({
       generateId: false,
     },
   },
+  user: {
+    additionalFields: {
+      verified: {
+        type: "boolean",
+        default: false,
+        description: "Whether the user has verified their account",
+      },
+    },
+  },
 });

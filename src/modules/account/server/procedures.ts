@@ -62,6 +62,7 @@ export const accountRouter = createTRPCRouter({
         offset: (cursor - 1) * DEFAULT_PAGE_SIZE,
         with: {
           category: true,
+          file: true,
           attributes: {
             with: {
               attribute: {

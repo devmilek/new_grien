@@ -48,13 +48,13 @@ export const Navbar = () => {
                       Kategorie
                     </h3>
                     <div className="grid grid-cols-2 gap-y-2 gap-x-32">
-                      {categories.map((cuisine) => (
+                      {categories.map((category) => (
                         <Link
-                          key={cuisine.id}
-                          href={`/attributes/cuisines/${cuisine.id}`}
+                          key={category.id}
+                          href={`/kategorie/${category.slug}`}
                           className="hover:underline"
                         >
-                          {cuisine.name}
+                          {category.name}
                         </Link>
                       ))}
                     </div>
@@ -72,7 +72,7 @@ export const Navbar = () => {
                       {attributes.cuisines.map((cuisine) => (
                         <Link
                           key={cuisine.id}
-                          href={`/attributes/cuisines/${cuisine.id}`}
+                          href={`/kuchnie-swiata/${cuisine.slug}`}
                           className="hover:underline"
                         >
                           {cuisine.name}
@@ -93,7 +93,7 @@ export const Navbar = () => {
                       {attributes.occasions.map((cuisine) => (
                         <Link
                           key={cuisine.id}
-                          href={`/attributes/cuisines/${cuisine.id}`}
+                          href={`/okazje/${cuisine.slug}`}
                           className="hover:underline"
                         >
                           {cuisine.name}
@@ -114,7 +114,7 @@ export const Navbar = () => {
                       {attributes.diets.map((cuisine) => (
                         <Link
                           key={cuisine.id}
-                          href={`/attributes/cuisines/${cuisine.id}`}
+                          href={`/diety/${cuisine.slug}`}
                           className="hover:underline"
                         >
                           {cuisine.name}

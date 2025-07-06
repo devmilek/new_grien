@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getS3Url(key: string) {
   const baseUrl = process.env.NEXT_PUBLIC_R2_PUBLIC_URL!;
-  return `${baseUrl}/${key}.webp`;
+  return `${baseUrl}/${key}`;
 }
 
 export const getIdFromSlug = (slug: string): string | null => {

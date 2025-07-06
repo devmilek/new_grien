@@ -35,6 +35,9 @@ export const recipes = pgTable("recipes", {
       onDelete: "cascade",
     })
     .notNull(),
+  licenseId: uuid("license_id").references(() => licenses.id, {
+    onDelete: "set null",
+  }),
   authorId: uuid("author_id")
     .notNull()
     .references(() => user.id, {
@@ -98,7 +101,7 @@ export const recipeIngredients = pgTable(
       scale: 2,
       mode: "number",
     }).notNull(),
-    unit: varchar("unit", { length: 50 }).notNull(),
+    unit: varchar("unit", { length: 50 }),
   },
   (t) => [primaryKey({ columns: [t.recipeId, t.ingredientAlliasId] })]
 );
@@ -209,3 +212,29 @@ export const recipeLikes = pgTable(
     }),
   ]
 );
+
+export const licenses = pgTable("licenses", {
+  id: uuid().primaryKey().defaultRandom(),
+
+  author: varchar("author", {
+    length: 255,
+  }).notNull(),
+  sourceUrl: varchar("source_url", {
+    length: 255,
+  }).notNull(),
+  originalTitle: varchar("original_title", {
+    length: 255,
+  }),
+  imagesAuthor: varchar("image_author", {
+    length: 255,
+  }),
+  licenseType: varchar("license_type", { length: 50 }).notNull(), // np. "CC BY-NC-SA 3.0", "All rights reserved"
+  licenseLink: varchar("license_link", { length: 255 }).notNull(),
+});
+
+export type Licence = typeof licenses.$inferSelect;
+export type LicenceInsert = typeof licenses.$inferInsert;
+
+export const licencesRelations = relations(licenses, ({ many }) => ({
+  recipes: many(recipes),
+}));

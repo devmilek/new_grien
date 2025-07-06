@@ -74,7 +74,7 @@ const UserRecipeCard = ({ data }: UserRecipeCardProps) => {
     >
       <div className="relative aspect-[4/3] w-80 bg-muted rounded-xl overflow-hidden border">
         <Image
-          src={getS3Url(data.fileId)}
+          src={getS3Url(data.file.key)}
           fill
           alt={data.title}
           className="object-cover"

@@ -18,6 +18,7 @@ export const recipeDetailsRouter = createTRPCRouter({
       where: and(eq(recipes.id, recipeId)),
       with: {
         author: true,
+        file: true,
         category: {
           columns: {
             id: true,

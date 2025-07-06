@@ -4,8 +4,8 @@ import { RecipeHero } from "../sections/recipe-hero";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
 import { CommentsCard } from "@/modules/comments/ui/components/comments-card";
+import { IngredientsCard } from "../sections/ingredients-card";
 
 export const RecipeDetailsView = ({ data }: { data: GetRecipe }) => {
   return (
@@ -41,33 +41,8 @@ export const RecipeDetailsView = ({ data }: { data: GetRecipe }) => {
           </div>
           <CommentsCard recipeId={data.id} />
         </div>
-        <div className="w-[360px] p-6 rounded-2xl bg-background border">
-          <h2 className="font-display text-2xl">Składniki</h2>
-          <div className="mt-4">
-            {data.ingredients.map((ingredient) => (
-              <Fragment key={ingredient.ingredientAlliasId}>
-                <div
-                  key={ingredient.ingredientAlliasId}
-                  className="flex items-center gap-2"
-                >
-                  <Checkbox id={ingredient.ingredientAlliasId} />
-                  <label
-                    htmlFor={ingredient.ingredientAlliasId}
-                    className="capitalize text-sm font-medium"
-                  >
-                    {ingredient.ingredientAlias.alias}{" "}
-                    <span className="text-muted-foreground font-normal">
-                      ({ingredient.quantity} {ingredient.unit})
-                    </span>
-                  </label>
-                </div>
-                {ingredient !==
-                  data.ingredients[data.ingredients.length - 1] && (
-                  <Separator className="my-2" />
-                )}
-              </Fragment>
-            ))}
-          </div>
+        <div className="w-[320px]">
+          <IngredientsCard ingredients={data.ingredients} />
         </div>
       </div>
     </div>

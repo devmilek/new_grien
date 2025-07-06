@@ -3,6 +3,7 @@ import { Geist, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { TRPCReactProvider } from "@/trpc/client";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +31,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${dmSerifDisplay.variable} antialiased bg-zinc-100`}
       >
-        <TRPCReactProvider>
-          {children}
-          <Toaster richColors theme="light" visibleToasts={5} />
-        </TRPCReactProvider>
+        <NuqsAdapter>
+          <TRPCReactProvider>
+            {children}
+            <Toaster richColors theme="light" visibleToasts={5} />
+          </TRPCReactProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );
