@@ -76,7 +76,7 @@ export const FilteredRecipeCard = ({
     <div className="bg-background flex items-center gap-8 group">
       <Link
         href={`/przepisy/${getRecipeSlug(data.id, data.title)}`}
-        className="relative aspect-[4/3] w-80 bg-muted rounded-xl overflow-hidden border block"
+        className="relative aspect-[4/3] w-64 bg-muted rounded-xl overflow-hidden border block"
       >
         <Image
           src={getS3Url(data.file.key)}
@@ -89,7 +89,7 @@ export const FilteredRecipeCard = ({
       <div className="flex-1">
         <Link
           href={`/kategorie/${data.category.slug}`}
-          className="text-sm text-primary font-medium hover:underline inline-block mb-2"
+          className="text-xs text-primary font-medium hover:underline inline-block mb-2"
         >
           {data.category.name}
         </Link>
@@ -98,7 +98,7 @@ export const FilteredRecipeCard = ({
           href={`/przepisy/${getRecipeSlug(data.id, data.title)}`}
           className="block"
         >
-          <h2 className="text-2xl font-display group-hover:underline">
+          <h2 className="text-xl font-display group-hover:underline">
             {data.title}
           </h2>
         </Link>
