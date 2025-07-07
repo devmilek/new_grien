@@ -43,15 +43,20 @@ export const RecipeActions = ({
   return (
     <div className="pt-4 border-t flex items-center justify-between">
       <Button
-        size="sm"
+        className="py-0 pe-0"
         variant="outline"
-        disabled={!session}
+        size="sm"
         onClick={() => mutate({ recipeId })}
+        disabled={!session}
       >
         <StarIcon
+          aria-hidden="true"
           className={cn(data?.liked && "fill-amber-600 text-amber-600")}
         />
-        {data?.total}
+        Polub
+        <span className="text-muted-foreground before:bg-input relative ms-1 inline-flex h-full items-center justify-center rounded-full pl-3 text-xs font-medium before:absolute before:inset-0 before:left-0 before:w-px">
+          {data?.total}
+        </span>
       </Button>
       <ShareButton
         recipeId={recipeId}

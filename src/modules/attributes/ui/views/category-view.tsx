@@ -3,16 +3,13 @@ import { db } from "@/db";
 import { categories, recipes } from "@/db/schema";
 import { loadRecipesSearchParams } from "@/modules/recipes-filtering/params";
 import { FacetedSearch } from "@/modules/recipes-filtering/ui/components/faceted-search";
-import {
-  RecipesFeed,
-  RecipesFeedSkeleton,
-} from "@/modules/recipes-filtering/ui/sections/recipes-feed";
+import { RecipesFeed } from "@/modules/recipes-filtering/ui/sections/recipes-feed";
 import { RecipesListHero } from "@/modules/recipes-filtering/ui/sections/recipes-list-hero";
 import { prefetch, trpc } from "@/trpc/server";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { SearchParams } from "nuqs";
-import React, { Suspense } from "react";
+import React from "react";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
@@ -52,13 +49,11 @@ const CategoryPage = async ({ params, searchParams }: CategoryPageProps) => {
         subheading={`${recipesCount} przepisów w tej kategorii`}
         imageUrl="/food.jpg"
       />
-      <div className="flex gap-6 items-start">
-        <div className="max-w-[350px] w-full">
+      <div className="flex gap-4 items-start mt-4">
+        <div className="max-w-[300px] w-full hidden p-6 bg-white rounded-2xl border lg:block">
           <FacetedSearch hideAttribute="categories" />
         </div>
-        <Suspense fallback={<RecipesFeedSkeleton />}>
-          <RecipesFeed categorySlug={slug} />
-        </Suspense>
+        <RecipesFeed categorySlug={slug} />
       </div>
     </div>
   );

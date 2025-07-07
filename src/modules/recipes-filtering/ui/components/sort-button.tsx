@@ -8,7 +8,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FilterIcon } from "lucide-react";
+import { SortAscIcon } from "lucide-react";
 import React from "react";
 import {
   SortBy,
@@ -23,7 +23,7 @@ export const SortButton = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline">
-          <FilterIcon />
+          <SortAscIcon />
           Sortuj
           <Badge variant="secondary">
             {sort === "newest" && "Najnowsze"}

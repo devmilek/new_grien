@@ -13,7 +13,7 @@ export const RecipesListHero = ({
   subheading,
 }: RecipesListHeroProps) => {
   return (
-    <div className="relative h-96 rounded-2xl overflow-hidden mb-6">
+    <div className="relative h-96 rounded-2xl overflow-hidden">
       <div className="absolute z-20 bg-black/60 size-full flex items-center justify-center flex-col text-white">
         <h1 className="font-display text-4xl">{heading}</h1>
         <p className="mt-1">{subheading}</p>

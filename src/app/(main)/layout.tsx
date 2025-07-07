@@ -10,7 +10,7 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
     <>
       <HydrateClient>
         <Navbar />
-        <main className="pt-20 pb-10">{children}</main>
+        <main className="pt-20 pb-10 min-h-screen">{children}</main>
         <Footer />
       </HydrateClient>
     </>

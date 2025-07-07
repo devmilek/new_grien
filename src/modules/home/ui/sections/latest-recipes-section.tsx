@@ -48,7 +48,7 @@ export const LatestRecipesSection = () => {
       <header className="flex items-center justify-between">
         <h2 className="text-2xl font-display">Wyniki</h2>
       </header>
-      <div className="space-y-6 mt-5">
+      <div className="space-y-6 mt-5 @container">
         {recipes.map((recipe) => (
           <FilteredRecipeCard key={recipe.id} data={recipe} />
         ))}

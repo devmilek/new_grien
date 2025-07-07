@@ -73,10 +73,10 @@ export const FilteredRecipeCard = ({
   }
 
   return (
-    <div className="bg-background flex items-center gap-8 group">
+    <div className="bg-background flex flex-col items-center gap-4 @lg:gap-8 @lg:flex-row group">
       <Link
         href={`/przepisy/${getRecipeSlug(data.id, data.title)}`}
-        className="relative aspect-[4/3] w-64 bg-muted rounded-xl overflow-hidden border block"
+        className="relative aspect-[4/3] w-full @lg:w-64 bg-muted rounded-xl overflow-hidden border block"
       >
         <Image
           src={getS3Url(data.file.key)}

@@ -7,6 +7,7 @@ import { Accordion } from "../../../../components/ui/accordion";
 import { useRecipesFilters } from "../../hooks/use-recipes-filters";
 import { FilterSection } from "./filter-section";
 import { Attribute } from "@/db/schema";
+import { Button } from "@/components/ui/button";
 
 interface FacetedSearchProps {
   hideAttribute?: Attribute["type"] | "categories";
@@ -95,8 +96,18 @@ export const FacetedSearch = ({ hideAttribute }: FacetedSearchProps) => {
         ]),
   ];
 
+  const handleClearFilters = () => {
+    setCategory("");
+    setAttributesParams([]);
+  };
+
+  const hasFilters = filterSections.some(
+    (section) => section.selectedItems.length > 0
+  );
+
   return (
-    <div className="p-6 bg-white rounded-2xl border">
+    <>
+      <h3 className="font-display text-xl mb-2">Filtruj</h3>
       <Accordion type="multiple">
         {filterSections.map((section) => (
           <FilterSection
@@ -109,6 +120,15 @@ export const FacetedSearch = ({ hideAttribute }: FacetedSearchProps) => {
           />
         ))}
       </Accordion>
-    </div>
+      {hasFilters && (
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handleClearFilters}
+        >
+          Wyczyść filtry
+        </Button>
+      )}
+    </>
   );
 };
