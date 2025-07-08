@@ -6,6 +6,7 @@ import { AlertTriangle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { CommentsCard } from "@/modules/comments/ui/components/comments-card";
 import { IngredientsCard } from "../sections/ingredients-card";
+import RecipeLicense from "../sections/recipe-license";
 
 export const RecipeDetailsView = ({ data }: { data: GetRecipe }) => {
   return (
@@ -39,6 +40,7 @@ export const RecipeDetailsView = ({ data }: { data: GetRecipe }) => {
               </Fragment>
             ))}
           </div>
+          {data.license && <RecipeLicense licence={data.license} />}
           <CommentsCard recipeId={data.id} />
         </div>
         <div className="max-w-[360px] w-full">

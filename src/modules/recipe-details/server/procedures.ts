@@ -20,6 +20,7 @@ export const recipeDetailsRouter = createTRPCRouter({
       with: {
         author: true,
         file: true,
+        license: true,
         category: {
           columns: {
             id: true,

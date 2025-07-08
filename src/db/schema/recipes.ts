@@ -78,6 +78,10 @@ export const recipesRelations = relations(recipes, ({ one, many }) => ({
     fields: [recipes.authorId],
     references: [user.id],
   }),
+  license: one(licenses, {
+    fields: [recipes.licenseId],
+    references: [licenses.id],
+  }),
 }));
 
 export type Recipe = typeof recipes.$inferSelect;

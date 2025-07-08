@@ -1,28 +1,24 @@
-import { GeneratedAvatar } from "@/components/generated-avatar";
-import { Button } from "@/components/ui/button";
 import { DEFAULT_PAGE } from "@/contstants";
 import { db } from "@/db";
 import { user as dbUser, User } from "@/db/schema";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { constructMetadata } from "@/lib/construct-metadata";
 import { getIdFromSlug, getUserSlug } from "@/lib/utils";
-import EditProfileDialog from "@/modules/account/ui/components/edit-profile-dialog";
+import { UserDetailsView } from "@/modules/account/ui/views/user-details-view";
 import { loadRecipesSearchParams } from "@/modules/recipes-filtering/params";
-import { FacetedSearch } from "@/modules/recipes-filtering/ui/components/faceted-search";
-import { RecipesFeed } from "@/modules/recipes-filtering/ui/sections/recipes-feed";
-import { prefetch, trpc } from "@/trpc/server";
+import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { eq } from "drizzle-orm";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import Image from "next/image";
 import { notFound, redirect, RedirectType } from "next/navigation";
 import { SearchParams } from "nuqs";
-import React from "react";
+import React, { cache } from "react";
 
 interface ProfilePageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<SearchParams>;
 }
 
-const getUserById = async (id: string) => {
+const getUserById = cache(async (id: string) => {
   const user = await db.query.user.findFirst({
     where: eq(dbUser.id, id),
   });
@@ -32,10 +28,45 @@ const getUserById = async (id: string) => {
   }
 
   return user;
+});
+
+export const generateMetadata = async ({ params }: ProfilePageProps) => {
+  const { slug } = await params;
+
+  const id = getIdFromSlug(slug);
+
+  if (!id) {
+    return constructMetadata({
+      title: "Użytkownik nie znaleziony",
+      description: "Nie udało się znaleźć profilu użytkownika.",
+      noIndex: true,
+    });
+  }
+
+  let user: User;
+
+  try {
+    user = await getUserById(id);
+  } catch {
+    return constructMetadata({
+      title: "Użytkownik nie znaleziony",
+      description: "Nie udało się znaleźć profilu użytkownika.",
+      noIndex: true,
+    });
+  }
+
+  const correctSlug = getUserSlug(user.id, user.username);
+
+  return constructMetadata({
+    title: `${user.name} @${user.username} - Profil kucharza`,
+    description: `Odkryj przepisy kulinarne od ${user.name} na Grien. Sprawdź ulubione przepisy i inspiruj się kuchnią tego użytkownika.`,
+    url: `/kucharze/${correctSlug}`,
+    canonicalUrl: `/kucharze/${correctSlug}`,
+  });
 };
 
 const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
-  const { session } = await getCurrentSession();
+  const session = await getCurrentSession();
   const { slug } = await params;
 
   const id = getIdFromSlug(slug);
@@ -79,41 +110,16 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
     })
   );
 
+  prefetch(
+    trpc.account.getFollowStats.queryOptions({
+      userId: user.id,
+    })
+  );
+
   return (
-    <div className="container">
-      <div className="bg-white rounded-2xl pb-8 border">
-        <div className="h-32 sm:h-48 md:h-58 w-full rounded-2xl overflow-hidden relative border">
-          <Image src="/food.jpg" fill alt="Food" className="object-cover" />
-        </div>
-        <div className="px-4 sm:px-6 lg:px-10 -mt-8 sm:-mt-10 flex flex-col sm:flex-row items-start sm:items-end gap-4 sm:gap-6">
-          <GeneratedAvatar
-            seed={user.name}
-            className="size-20 sm:size-24 md:size-28 shadow-md"
-          />
-          <div className="flex-1 min-w-0">
-            <h1 className="font-display text-xl sm:text-2xl truncate">
-              {user.name}
-            </h1>
-            <p className="text-muted-foreground text-sm sm:text-base">
-              @{user.username}
-            </p>
-          </div>
-          <div className="w-full sm:w-auto">
-            {session?.userId && user.id === session.userId ? (
-              <EditProfileDialog />
-            ) : (
-              <Button className="w-full sm:w-auto">Obserwuj</Button>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="flex gap-4 items-start mt-4">
-        <div className="max-w-[300px] w-full hidden p-6 bg-white rounded-2xl border lg:block">
-          <FacetedSearch />
-        </div>
-        <RecipesFeed authorId={user.id} />
-      </div>
-    </div>
+    <HydrateClient>
+      <UserDetailsView user={user} currentUser={session.user} />
+    </HydrateClient>
   );
 };
 

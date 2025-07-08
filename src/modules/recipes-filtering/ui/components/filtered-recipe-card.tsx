@@ -27,6 +27,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import ImageLicenseBadge from "@/components/image-license-badge";
 
 export const FilteredRecipeCard = ({
   data,
@@ -78,6 +79,12 @@ export const FilteredRecipeCard = ({
         href={`/przepisy/${getRecipeSlug(data.id, data.title)}`}
         className="relative aspect-[4/3] w-full @lg:w-64 bg-muted rounded-xl overflow-hidden border block"
       >
+        {data.license && (
+          <ImageLicenseBadge
+            className="absolute top-2 right-2 z-40"
+            licence={data.license}
+          />
+        )}
         <Image
           src={getS3Url(data.file.key)}
           fill

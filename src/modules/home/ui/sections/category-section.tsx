@@ -1,4 +1,5 @@
 import { GeneratedAvatar } from "@/components/generated-avatar";
+import ImageLicenseBadge from "@/components/image-license-badge";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { categories, recipes } from "@/db/schema";
@@ -29,6 +30,7 @@ export const CategorySection = async () => {
       file: true,
       category: true,
       author: true,
+      license: true,
     },
     limit: 3,
     orderBy: desc(recipes.createdAt),
@@ -52,6 +54,12 @@ export const CategorySection = async () => {
               "col-span-2": index === data.length - 1 && data.length % 2 === 1,
             })}
           >
+            {recipe.license && (
+              <ImageLicenseBadge
+                className="absolute top-3 right-3 z-40"
+                licence={recipe.license}
+              />
+            )}
             <div className="z-20 relative p-6 from-black/60 to-black/0 bg-linear-to-t size-full flex flex-col justify-end">
               <p className="text-white/80 font-medium">
                 {recipe.category.name}

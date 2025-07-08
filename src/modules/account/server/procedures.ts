@@ -1,7 +1,11 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/contstants";
 import { db } from "@/db";
-import { recipes } from "@/db/schema";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { recipes, userFollowers } from "@/db/schema";
+import {
+  baseProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { endOfMonth, startOfMonth } from "date-fns";
 import { and, eq, gte, lte } from "drizzle-orm";
@@ -85,6 +89,98 @@ export const accountRouter = createTRPCRouter({
         cursor,
         hasMore,
       };
+    }),
+
+  getFollowStats: baseProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { user: currentUser } = ctx;
+      const { userId } = input;
+
+      const [followingRecord, followersCount, followingCount] =
+        await Promise.all([
+          currentUser
+            ? db.query.userFollowers.findFirst({
+                where: and(
+                  eq(userFollowers.followerId, currentUser.id),
+                  eq(userFollowers.followingId, userId)
+                ),
+              })
+            : Promise.resolve(null),
+          db.$count(userFollowers, eq(userFollowers.followingId, userId)),
+          db.$count(userFollowers, eq(userFollowers.followerId, userId)),
+        ]);
+
+      return {
+        isFollowing: !!followingRecord,
+        followersCount,
+        followingCount,
+      };
+    }),
+
+  followUser: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { user: currentUser } = ctx;
+      const { userId } = input;
+
+      // Sprawdzamy, czy już istnieje
+      const existing = await db
+        .select()
+        .from(userFollowers)
+        .where(
+          and(
+            eq(userFollowers.followerId, currentUser.id),
+            eq(userFollowers.followingId, userId)
+          )
+        );
+
+      if (existing.length > 0) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Już obserwujesz tego użytkownika.",
+        });
+      }
+
+      await db.insert(userFollowers).values({
+        followerId: currentUser.id,
+        followingId: input.userId,
+      });
+
+      return { success: true };
+    }),
+
+  unfollowUser: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { user: currentUser } = ctx;
+      const { userId } = input;
+
+      const existing = await db.query.userFollowers.findFirst({
+        where: and(
+          eq(userFollowers.followerId, currentUser.id),
+          eq(userFollowers.followingId, userId)
+        ),
+      });
+      if (!existing) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Nie obserwujesz tego użytkownika.",
+        });
+      }
+      await db
+        .delete(userFollowers)
+        .where(
+          and(
+            eq(userFollowers.followerId, currentUser.id),
+            eq(userFollowers.followingId, userId)
+          )
+        );
+      return { success: true };
     }),
 
   deleteRecipe: protectedProcedure

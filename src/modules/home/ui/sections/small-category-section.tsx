@@ -1,3 +1,4 @@
+import ImageLicenseBadge from "@/components/image-license-badge";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { categories, recipes } from "@/db/schema";
@@ -28,6 +29,7 @@ export const SmallCategorySection = async () => {
       file: true,
       category: true,
       author: true,
+      license: true,
     },
     limit: 5,
     orderBy: desc(recipes.createdAt),
@@ -57,6 +59,12 @@ export const SmallCategorySection = async () => {
                 src={getS3Url(recipe.file.key)}
                 className="size-full object-cover group-hover:scale-105 transition-transform"
               />
+              {recipe.license && (
+                <ImageLicenseBadge
+                  className="absolute top-1 right-1 z-40 size-5"
+                  licence={recipe.license}
+                />
+              )}
             </div>
             <div>
               <h3 className="font-display text-lg group-hover:underline">

@@ -23,3 +23,12 @@ export const getRecipeSlug = (id: string, title: string) => {
 export const getUserSlug = (id: string, username: string) => {
   return `${slugify(username)}-${id}`;
 };
+
+export const getDomainFromUrl = (url: string) => {
+  try {
+    const urlObject = new URL(url);
+    return urlObject.hostname;
+  } catch {
+    return url;
+  }
+};

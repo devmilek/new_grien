@@ -86,6 +86,7 @@ export const recipesFilteringRouter = createTRPCRouter({
           ),
           with: {
             category: true,
+            license: true,
             attributes: {
               with: {
                 attribute: true,

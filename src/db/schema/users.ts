@@ -6,6 +6,7 @@ import {
   uuid,
   char,
   varchar,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import { customAlphabet } from "nanoid";
 
@@ -83,3 +84,25 @@ export const verification = pgTable("verification", {
     () => /* @__PURE__ */ new Date()
   ),
 });
+
+export const userFollowers = pgTable(
+  "user_followers",
+  {
+    followerId: char("follower_id", {
+      length: 16,
+    })
+      .notNull()
+      .references(() => user.id, {
+        onDelete: "cascade",
+      }), // użytkownik, który obserwuje
+    followingId: char("following_id", {
+      length: 16,
+    })
+      .notNull()
+      .references(() => user.id, {
+        onDelete: "cascade",
+      }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.followerId, t.followingId] })]
+);

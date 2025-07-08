@@ -14,6 +14,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import ImageLicenseBadge from "@/components/image-license-badge";
 
 export const RecipeHero = ({ data }: { data: GetRecipe }) => {
   const badges = getRecipeBadges(data);
@@ -27,6 +28,12 @@ export const RecipeHero = ({ data }: { data: GetRecipe }) => {
           alt={data.title}
           className="object-cover"
         />
+        {data.license && (
+          <ImageLicenseBadge
+            className="absolute top-3 right-3 z-40"
+            licence={data.license}
+          />
+        )}
       </div>
       <div className="flex flex-col">
         <h1 className="text-3xl font-display">{data.title}</h1>

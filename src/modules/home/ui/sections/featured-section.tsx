@@ -1,4 +1,5 @@
 import { GeneratedAvatar } from "@/components/generated-avatar";
+import ImageLicenseBadge from "@/components/image-license-badge";
 import { db } from "@/db";
 import { recipes } from "@/db/schema";
 import { cn, getRecipeSlug, getS3Url } from "@/lib/utils";
@@ -16,6 +17,7 @@ export const FeaturedSection = async () => {
       file: true,
       category: true,
       author: true,
+      license: true,
     },
     limit: 3,
     orderBy: desc(recipes.createdAt),
@@ -32,6 +34,12 @@ export const FeaturedSection = async () => {
               {}
             )}
           >
+            {recipe.license && (
+              <ImageLicenseBadge
+                className="absolute top-3 right-3 z-40"
+                licence={recipe.license}
+              />
+            )}
             <div className="z-20 relative p-6 from-black/60 to-black/0 bg-linear-to-t size-full flex flex-col justify-end">
               <p className="text-white/80 font-medium">
                 {recipe.category.name}
