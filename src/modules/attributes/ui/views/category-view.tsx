@@ -15,7 +15,7 @@ const CategoryPage = async ({ category, recipesCount }: CategoryPageProps) => {
       <RecipesListHero
         heading={category.name}
         subheading={`${recipesCount} przepisów w tej kategorii`}
-        imageUrl={`/${category.slug}.jpg`}
+        imageUrl={`/kategorie/${category.slug}.jpg`}
       />
       <div className="flex gap-4 items-start mt-4">
         <div className="max-w-[300px] w-full hidden p-6 bg-white rounded-2xl border lg:block">

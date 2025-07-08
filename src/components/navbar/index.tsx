@@ -21,6 +21,12 @@ import {
 import { UserMenu } from "./user-menu";
 import { authClient } from "@/lib/auth/auth-client";
 import { Button } from "../ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -204,13 +210,15 @@ export const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden border-t bg-background max-h-screen overflow-y-scroll">
+        <div className="lg:hidden border-t bg-background max-h-screen overflow-y-scroll shadow-2xl">
           <div className="container mx-auto px-4 py-4 space-y-4">
             {/* Mobile Navigation Links */}
-            <div className="space-y-3">
-              <div>
-                <h3 className="font-semibold text-primary mb-2">Kategorie</h3>
-                <div className="grid grid-cols-2 gap-2 text-sm">
+            <Accordion type="single" collapsible>
+              <AccordionItem value="categories">
+                <AccordionTrigger className="font-semibold text-base text-primary">
+                  Kategorie
+                </AccordionTrigger>
+                <AccordionContent className="grid grid-cols-2 gap-2 text-sm">
                   {categories.map((category) => (
                     <Link
                       key={category.id}
@@ -221,59 +229,60 @@ export const Navbar = () => {
                       {category.name}
                     </Link>
                   ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-semibold text-primary mb-2">
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="cuisines">
+                <AccordionTrigger className="font-semibold text-base text-primary">
                   Kuchnie świata
-                </h3>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  {attributes.cuisines.map((cuisine) => (
+                </AccordionTrigger>
+                <AccordionContent className="grid grid-cols-2 gap-2 text-sm">
+                  {attributes.cuisines.map((item) => (
                     <Link
-                      key={cuisine.id}
-                      href={`/kuchnie-swiata/${cuisine.slug}`}
+                      key={item.id}
+                      href={`/kuchnie-swiata/${item.slug}`}
                       className="hover:underline"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      {cuisine.name}
+                      {item.name}
                     </Link>
                   ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-semibold text-primary mb-2">Okazje</h3>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  {attributes.occasions.map((occasion) => (
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="occasions">
+                <AccordionTrigger className="font-semibold text-base text-primary">
+                  Okazje
+                </AccordionTrigger>
+                <AccordionContent className="grid grid-cols-2 gap-2 text-sm">
+                  {attributes.occasions.map((item) => (
                     <Link
-                      key={occasion.id}
-                      href={`/okazje/${occasion.slug}`}
+                      key={item.id}
+                      href={`/okazje/${item.slug}`}
                       className="hover:underline"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      {occasion.name}
+                      {item.name}
                     </Link>
                   ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-semibold text-primary mb-2">Diety</h3>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  {attributes.diets.map((diet) => (
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="diets">
+                <AccordionTrigger className="font-semibold text-base text-primary">
+                  Diety
+                </AccordionTrigger>
+                <AccordionContent className="grid grid-cols-2 gap-2 text-sm">
+                  {attributes.diets.map((item) => (
                     <Link
-                      key={diet.id}
-                      href={`/diety/${diet.slug}`}
+                      key={item.id}
+                      href={`/diety/${item.slug}`}
                       className="hover:underline"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      {diet.name}
+                      {item.name}
                     </Link>
                   ))}
-                </div>
-              </div>
-            </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
 
             {/* Mobile Auth Buttons */}
             {!data && (

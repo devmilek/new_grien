@@ -46,7 +46,7 @@ export const LatestRecipesSection = () => {
   return (
     <div className="border p-6 bg-white rounded-2xl flex-1">
       <header className="flex items-center justify-between">
-        <h2 className="text-2xl font-display">Wyniki</h2>
+        <h2 className="text-2xl font-display">Najnowsze przepisy</h2>
       </header>
       <div className="space-y-6 mt-5 @container">
         {recipes.map((recipe) => (
