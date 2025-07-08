@@ -20,7 +20,7 @@ export const RecipeHero = ({ data }: { data: GetRecipe }) => {
   const badges = getRecipeBadges(data);
 
   return (
-    <div className="p-6 rounded-2xl border bg-background grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="p-4 md:p-6 rounded-2xl border bg-background grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
         <Image
           src={getS3Url(data.file.key)}

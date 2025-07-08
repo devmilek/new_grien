@@ -2,7 +2,13 @@
 
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ChefHatIcon, SearchIcon, MenuIcon, XIcon } from "lucide-react";
+import {
+  ChefHatIcon,
+  SearchIcon,
+  MenuIcon,
+  XIcon,
+  UserIcon,
+} from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import {
@@ -37,11 +43,11 @@ export const Navbar = () => {
             className="flex items-center gap-2 font-medium font-display text-2xl text-primary"
           >
             <ChefHatIcon className="size-6" />
-            <span className="hidden sm:inline">grien</span>
+            <span>grien</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:block">
+          <div className="hidden xl:block">
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
@@ -135,7 +141,7 @@ export const Navbar = () => {
 
         <div className="flex items-center gap-2 md:gap-4">
           {/* Search Button */}
-          <button className="border-input bg-background text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/50 inline-flex h-9 w-fit rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] hidden md:flex">
+          <button className="border-input hidden lg:flex bg-background text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-fit rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]">
             <span className="flex grow items-center">
               <SearchIcon
                 className="text-muted-foreground/80 -ms-1 me-3"
@@ -152,9 +158,9 @@ export const Navbar = () => {
           </button>
 
           {/* Mobile Search Icon */}
-          <button className="md:hidden p-2 hover:bg-muted rounded-md">
+          <Button variant="ghost" size="icon" className="lg:hidden">
             <SearchIcon size={20} />
-          </button>
+          </Button>
 
           {/* Auth Buttons */}
           {data ? (
@@ -164,12 +170,22 @@ export const Navbar = () => {
               <Button
                 asChild
                 variant="outline"
-                className="hidden sm:inline-flex"
+                className="hidden lg:inline-flex"
               >
                 <Link href="/logowanie">Zaloguj się</Link>
               </Button>
-              <Button asChild className="hidden sm:inline-flex">
+              <Button asChild className="hidden lg:inline-flex">
                 <Link href="/rejestracja">Zarejestruj się</Link>
+              </Button>
+              <Button
+                asChild
+                size="icon"
+                variant="outline"
+                className="lg:hidden"
+              >
+                <Link href="/logowanie">
+                  <UserIcon />
+                </Link>
               </Button>
             </>
           )}
@@ -178,7 +194,7 @@ export const Navbar = () => {
           <Button
             variant="outline"
             size="icon"
-            className="lg:hidden hover:bg-muted rounded-md"
+            className="xl:hidden hover:bg-muted rounded-md"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}

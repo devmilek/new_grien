@@ -1,14 +1,22 @@
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/contstants";
 import { db } from "@/db";
-import { recipes, userFollowers } from "@/db/schema";
+import {
+  comments,
+  files,
+  recipeLikes,
+  recipes,
+  userFollowers,
+} from "@/db/schema";
+import { s3 } from "@/lib/s3";
 import {
   baseProcedure,
   createTRPCRouter,
   protectedProcedure,
 } from "@/trpc/init";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { TRPCError } from "@trpc/server";
 import { endOfMonth, startOfMonth } from "date-fns";
-import { and, eq, gte, lte } from "drizzle-orm";
+import { and, eq, gte, inArray, lte } from "drizzle-orm";
 import { z } from "zod/v4";
 
 export const accountRouter = createTRPCRouter({
@@ -38,14 +46,66 @@ export const accountRouter = createTRPCRouter({
       )
     );
 
+    const likesCount = await db.$count(
+      recipeLikes,
+      inArray(
+        recipeLikes.recipeId,
+        db
+          .select({ id: recipes.id })
+          .from(recipes)
+          .where(eq(recipes.authorId, user.id))
+      )
+    );
+
+    const likesThisMonth = await db.$count(
+      recipeLikes,
+      and(
+        inArray(
+          recipeLikes.recipeId,
+          db
+            .select({ id: recipes.id })
+            .from(recipes)
+            .where(eq(recipes.authorId, user.id))
+        ),
+        gte(recipeLikes.createdAt, startOfCurrentMonth),
+        lte(recipeLikes.createdAt, endOfCurrentMonth)
+      )
+    );
+
+    const commentsCount = await db.$count(
+      comments,
+      inArray(
+        comments.recipeId,
+        db
+          .select({ id: recipes.id })
+          .from(recipes)
+          .where(eq(recipes.authorId, user.id))
+      )
+    );
+
+    const commentsThisMonth = await db.$count(
+      comments,
+      and(
+        inArray(
+          comments.recipeId,
+          db
+            .select({ id: recipes.id })
+            .from(recipes)
+            .where(eq(recipes.authorId, user.id))
+        ),
+        gte(comments.createdAt, startOfCurrentMonth),
+        lte(comments.createdAt, endOfCurrentMonth)
+      )
+    );
+
     return {
       recipesCount,
       notPublishedCount,
       recipesThisMonth,
-      likes: 43,
-      likesThisMonth: 12,
-      comments: 12,
-      commentsThisMonth: 3,
+      likes: likesCount,
+      likesThisMonth: likesThisMonth,
+      comments: commentsCount,
+      commentsThisMonth,
     };
   }),
 
@@ -191,6 +251,9 @@ export const accountRouter = createTRPCRouter({
 
       const recipe = await db.query.recipes.findFirst({
         where: and(eq(recipes.id, id), eq(recipes.authorId, user.id)),
+        with: {
+          file: true,
+        },
       });
 
       if (!recipe) {
@@ -201,6 +264,24 @@ export const accountRouter = createTRPCRouter({
         });
       }
 
+      if (recipe.file) {
+        // Usuwamy plik z S3
+        try {
+          await s3.send(
+            new DeleteObjectCommand({
+              Bucket: process.env.R2_BUCKET_NAME,
+              Key: recipe.file.key,
+            })
+          );
+          await db.delete(files).where(eq(files.id, recipe.file.id));
+        } catch (error) {
+          console.error("Error deleting file from S3:", error);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Błąd podczas usuwania pliku.",
+          });
+        }
+      }
       await db.delete(recipes).where(eq(recipes.id, id));
     }),
 });

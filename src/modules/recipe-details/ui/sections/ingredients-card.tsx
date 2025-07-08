@@ -55,7 +55,7 @@ export const IngredientsCard = ({
   ingredients: GetRecipe["ingredients"];
 }) => {
   return (
-    <div className="p-6 rounded-2xl bg-background border">
+    <div className="p-4 md:p-6 rounded-2xl bg-background border">
       <h2 className="font-display text-2xl">Składniki</h2>
       <div className="mt-4">
         {ingredients.map((ingredient, index) => (

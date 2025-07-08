@@ -23,58 +23,48 @@ export const FeaturedSection = async () => {
     orderBy: desc(recipes.createdAt),
   });
   return (
-    <section className="space-y-6">
-      <div className="flex gap-3">
-        {data.map((recipe) => (
-          <Link
-            href={`/przepisy/${getRecipeSlug(recipe.id, recipe.title)}`}
-            key={recipe.id}
-            className={cn(
-              "relative h-[460px] overflow-hidden rounded-2xl group flex-2 hover:flex-3 transition-all",
-              {}
-            )}
-          >
-            {recipe.license && (
-              <ImageLicenseBadge
-                className="absolute top-3 right-3 z-40"
-                licence={recipe.license}
-              />
-            )}
-            <div className="z-20 relative p-6 from-black/60 to-black/0 bg-linear-to-t size-full flex flex-col justify-end">
-              <p className="text-white/80 font-medium">
-                {recipe.category.name}
-              </p>
-              <h3 className="text-2xl font-display text-white">
-                {recipe.title}
-              </h3>
-              <div className="flex items-center mt-4 text-sm text-white">
-                <div className="flex items-center gap-2">
-                  <GeneratedAvatar
-                    seed={recipe.author.name}
-                    className="size-6"
-                  />
-                  <span className="font-semibold text-sm">
-                    {recipe.author.name}
-                  </span>
-                </div>
-                <span className="mx-1">•</span>
-                <time dateTime={recipe.createdAt.toISOString()}>
-                  {formatDistanceToNow(recipe.createdAt, {
-                    addSuffix: true,
-                    locale: pl,
-                  })}
-                </time>
-              </div>
-            </div>
-            <Image
-              src={getS3Url(recipe.file.key)}
-              alt={recipe.title}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform"
+    <section className="flex gap-3 flex-col lg:flex-row">
+      {data.map((recipe) => (
+        <Link
+          href={`/przepisy/${getRecipeSlug(recipe.id, recipe.title)}`}
+          key={recipe.id}
+          className={cn(
+            "relative h-72 lg:h-[460px] overflow-hidden rounded-2xl group lg:flex-2 lg:hover:flex-3 transition-all"
+          )}
+        >
+          {recipe.license && (
+            <ImageLicenseBadge
+              className="absolute top-3 right-3 z-40"
+              licence={recipe.license}
             />
-          </Link>
-        ))}
-      </div>
+          )}
+          <div className="z-20 relative p-6 from-black/60 to-black/0 bg-linear-to-t size-full flex flex-col justify-end">
+            <p className="text-white/80 font-medium">{recipe.category.name}</p>
+            <h3 className="text-2xl font-display text-white">{recipe.title}</h3>
+            <div className="flex items-center mt-4 text-sm text-white">
+              <div className="flex items-center gap-2">
+                <GeneratedAvatar seed={recipe.author.name} className="size-6" />
+                <span className="font-semibold text-sm">
+                  {recipe.author.name}
+                </span>
+              </div>
+              <span className="mx-1">•</span>
+              <time dateTime={recipe.createdAt.toISOString()}>
+                {formatDistanceToNow(recipe.createdAt, {
+                  addSuffix: true,
+                  locale: pl,
+                })}
+              </time>
+            </div>
+          </div>
+          <Image
+            src={getS3Url(recipe.file.key)}
+            alt={recipe.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform"
+          />
+        </Link>
+      ))}
     </section>
   );
 };

@@ -1,12 +1,12 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { GetRecipe } from "../../types";
 import { RecipeHero } from "../sections/recipe-hero";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { CommentsCard } from "@/modules/comments/ui/components/comments-card";
 import { IngredientsCard } from "../sections/ingredients-card";
 import RecipeLicense from "../sections/recipe-license";
+import { PreparationSteps } from "../sections/preparation-steps";
 
 export const RecipeDetailsView = ({ data }: { data: GetRecipe }) => {
   return (
@@ -23,27 +23,13 @@ export const RecipeDetailsView = ({ data }: { data: GetRecipe }) => {
         </Alert>
       )}
       <RecipeHero data={data} />
-      <div className="flex gap-4 items-start">
-        <div className="@container flex-1 space-y-8">
-          <div className="p-6 rounded-2xl bg-background border">
-            {data.preparationSteps.map((step, index) => (
-              <Fragment key={step.id}>
-                <div>
-                  <h3 className="font-display text-2xl">Krok {index + 1}</h3>
-                  <p className="mt-2 text-muted-foreground">
-                    {step.description}
-                  </p>
-                </div>
-                {index < data.preparationSteps.length - 1 && (
-                  <Separator className="my-5" />
-                )}
-              </Fragment>
-            ))}
-          </div>
+      <div className="flex gap-4 items-start flex-col-reverse lg:flex-row">
+        <div className="flex-1 space-y-8">
+          <PreparationSteps data={data.preparationSteps} />
           {data.license && <RecipeLicense licence={data.license} />}
           <CommentsCard recipeId={data.id} />
         </div>
-        <div className="max-w-[360px] w-full">
+        <div className="lg:max-w-[360px] w-full">
           <IngredientsCard ingredients={data.ingredients} />
         </div>
       </div>

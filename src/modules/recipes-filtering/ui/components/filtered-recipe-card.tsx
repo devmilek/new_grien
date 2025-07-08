@@ -14,7 +14,7 @@ import {
   formatTime,
 } from "@/lib/formatters";
 import Image from "next/image";
-import { getRecipeSlug, getS3Url } from "@/lib/utils";
+import { getRecipeSlug, getS3Url, getUserSlug } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { GeneratedAvatar } from "@/components/generated-avatar";
@@ -129,7 +129,12 @@ export const FilteredRecipeCard = ({
         </div>
 
         <div className="flex items-center text-sm text-muted-foreground mt-4">
-          <Link href="/" className="flex items-center gap-2">
+          <Link
+            href={
+              "/kucharze/" + getUserSlug(data.author.id, data.author.username)
+            }
+            className="flex items-center gap-2"
+          >
             <GeneratedAvatar
               seed={data.author.name}
               className="size-8"
@@ -156,7 +161,7 @@ export const FilteredRecipeCardSkeleton = () => {
   return (
     <div className="bg-background flex items-center gap-8">
       {/* Image skeleton */}
-      <div className="relative aspect-[4/3] w-80 bg-muted rounded-xl overflow-hidden border">
+      <div className="relative aspect-[4/3] @lg:w-64 bg-muted rounded-xl overflow-hidden border">
         <Skeleton className="w-full h-full" />
       </div>
 

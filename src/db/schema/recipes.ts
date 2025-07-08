@@ -213,6 +213,7 @@ export const recipeLikes = pgTable(
       .references(() => recipes.id, {
         onDelete: "cascade",
       }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => [
     primaryKey({

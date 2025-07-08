@@ -71,9 +71,9 @@ const UserRecipeCard = ({ data }: UserRecipeCardProps) => {
   return (
     <div
       key={data.id}
-      className="bg-background p-4 pr-6 rounded-2xl border flex items-center gap-8"
+      className="bg-background p-4 md:pr-6 rounded-2xl border flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8"
     >
-      <div className="relative aspect-[4/3] w-80 bg-muted rounded-xl overflow-hidden border">
+      <div className="relative aspect-[4/3] w-full md:w-80 bg-muted rounded-xl overflow-hidden border">
         <Image
           src={getS3Url(data.file.key)}
           fill
@@ -81,9 +81,9 @@ const UserRecipeCard = ({ data }: UserRecipeCardProps) => {
           className="object-cover"
         />
       </div>
-      <div className="flex-1">
-        <h2 className="text-2xl font-display">{data.title}</h2>
-        <p className="line-clamp-3 mt-1 mb-3 text-muted-foreground">
+      <div className="flex-1 w-full md:w-auto">
+        <h2 className="text-xl md:text-2xl font-display">{data.title}</h2>
+        <p className="line-clamp-3 mt-1 mb-3 text-muted-foreground text-sm md:text-base">
           {data.description}
         </p>
         <div className="flex gap-2 flex-wrap">
@@ -98,7 +98,7 @@ const UserRecipeCard = ({ data }: UserRecipeCardProps) => {
           ))}
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 w-full md:w-auto justify-end">
         {data.published && (
           <Button variant="outline" size="icon">
             <ShareIcon />
@@ -132,22 +132,22 @@ const UserRecipeCard = ({ data }: UserRecipeCardProps) => {
 
 const UserRecipeCardSkeleton = () => {
   return (
-    <div className="bg-background p-4 pr-6 rounded-2xl border flex items-center gap-8">
+    <div className="bg-background p-4 md:pr-6 rounded-2xl border flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
       {/* Image skeleton */}
-      <div className="relative aspect-[4/3] w-80 bg-muted rounded-xl overflow-hidden border">
+      <div className="relative aspect-[4/3] w-full md:w-80 bg-muted rounded-xl overflow-hidden border">
         <Skeleton className="w-full h-full" />
       </div>
 
       {/* Content skeleton */}
-      <div className="flex-1 space-y-3">
+      <div className="flex-1 w-full md:w-auto space-y-3">
         {/* Title skeleton */}
-        <Skeleton className="h-8 w-3/4" />
+        <Skeleton className="h-6 md:h-8 w-3/4" />
 
         {/* Description skeleton - 3 lines */}
         <div className="space-y-2">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-2/3" />
+          <Skeleton className="h-3 md:h-4 w-full" />
+          <Skeleton className="h-3 md:h-4 w-full" />
+          <Skeleton className="h-3 md:h-4 w-2/3" />
         </div>
 
         {/* Badges skeleton */}
@@ -161,7 +161,7 @@ const UserRecipeCardSkeleton = () => {
       </div>
 
       {/* Action buttons skeleton */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 w-full md:w-auto justify-end">
         <Skeleton className="h-10 w-10 rounded-md" />
         <Skeleton className="h-10 w-10 rounded-md" />
         <Skeleton className="h-10 w-10 rounded-md" />

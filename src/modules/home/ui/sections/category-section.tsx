@@ -45,13 +45,14 @@ export const CategorySection = async () => {
           </Link>
         </Button>
       </header>
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-6">
         {data.map((recipe, index) => (
           <Link
             href={`/przepisy/${getRecipeSlug(recipe.id, recipe.title)}`}
             key={recipe.id}
             className={cn("relative h-96 overflow-hidden rounded-2xl group", {
-              "col-span-2": index === data.length - 1 && data.length % 2 === 1,
+              "lg:col-span-2":
+                index === data.length - 1 && data.length % 2 === 1,
             })}
           >
             {recipe.license && (
