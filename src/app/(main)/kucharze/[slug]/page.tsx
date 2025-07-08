@@ -2,33 +2,65 @@ import { GeneratedAvatar } from "@/components/generated-avatar";
 import { Button } from "@/components/ui/button";
 import { DEFAULT_PAGE } from "@/contstants";
 import { db } from "@/db";
-import { user as dbUser } from "@/db/schema";
-import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { user as dbUser, User } from "@/db/schema";
+import { getIdFromSlug, getUserSlug } from "@/lib/utils";
+import EditProfileDialog from "@/modules/account/ui/components/edit-profile-dialog";
 import { loadRecipesSearchParams } from "@/modules/recipes-filtering/params";
 import { FacetedSearch } from "@/modules/recipes-filtering/ui/components/faceted-search";
 import { RecipesFeed } from "@/modules/recipes-filtering/ui/sections/recipes-feed";
 import { prefetch, trpc } from "@/trpc/server";
 import { eq } from "drizzle-orm";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect, RedirectType } from "next/navigation";
 import { SearchParams } from "nuqs";
 import React from "react";
 
 interface ProfilePageProps {
-  params: Promise<{ username: string }>;
+  params: Promise<{ slug: string }>;
   searchParams: Promise<SearchParams>;
 }
 
-const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
-  const { user } = await getCurrentSession();
-  const { username } = await params;
-
-  const data = await db.query.user.findFirst({
-    where: eq(dbUser.username, username),
+const getUserById = async (id: string) => {
+  const user = await db.query.user.findFirst({
+    where: eq(dbUser.id, id),
   });
 
-  if (!data) {
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user;
+};
+
+const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
+  const { slug } = await params;
+
+  const id = getIdFromSlug(slug);
+
+  if (!id) {
     return notFound();
+  }
+
+  let user: User;
+
+  try {
+    user = await getUserById(id);
+    const correctSlug = getUserSlug(user.id, user.username);
+
+    if (!user) {
+      return notFound();
+    }
+
+    if (correctSlug !== slug) {
+      const redirectUrl = `/kucharze/${correctSlug}`;
+      redirect(redirectUrl, RedirectType.replace);
+    }
+  } catch (e) {
+    if (isRedirectError(e)) {
+      throw e;
+    }
+    notFound();
   }
 
   const { atrybuty, sort, kategoria } = await loadRecipesSearchParams(
@@ -41,7 +73,7 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
       categorySlug: kategoria,
       attributesSlugs: atrybuty,
       sortBy: sort,
-      authorId: data.id,
+      authorId: user.id,
     })
   );
 
@@ -53,22 +85,20 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
         </div>
         <div className="px-4 sm:px-6 lg:px-10 -mt-8 sm:-mt-10 flex flex-col sm:flex-row items-start sm:items-end gap-4 sm:gap-6">
           <GeneratedAvatar
-            seed={data?.name}
+            seed={user.name}
             className="size-20 sm:size-24 md:size-28 shadow-md"
           />
           <div className="flex-1 min-w-0">
             <h1 className="font-display text-xl sm:text-2xl truncate">
-              {data.name}
+              {user.name}
             </h1>
             <p className="text-muted-foreground text-sm sm:text-base">
-              @{data.username}
+              @{user.username}
             </p>
           </div>
           <div className="w-full sm:w-auto">
-            {user && user.id === data.id ? (
-              <Button variant="outline" className="w-full sm:w-auto">
-                Edytuj profil
-              </Button>
+            {user && user.id === user.id ? (
+              <EditProfileDialog data={user} />
             ) : (
               <Button className="w-full sm:w-auto">Obserwuj</Button>
             )}
@@ -79,7 +109,7 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
         <div className="max-w-[300px] w-full hidden p-6 bg-white rounded-2xl border lg:block">
           <FacetedSearch />
         </div>
-        <RecipesFeed authorId={data.id} />
+        <RecipesFeed authorId={user.id} />
       </div>
     </div>
   );

@@ -10,7 +10,9 @@ export const authClient = createAuthClient({
   plugins: [usernameClient(), inferAdditionalFields<typeof auth>()],
 });
 
-type ErrorTypes = Partial<Record<keyof typeof auth.$ERROR_CODES, string>>;
+type ErrorTypes = Partial<Record<keyof typeof auth.$ERROR_CODES, string>> & {
+  [key: string]: string;
+};
 
 const errorCodes = {
   USER_ALREADY_EXISTS:
@@ -63,6 +65,8 @@ const errorCodes = {
     "Wystąpił nieoczekiwany błąd. Proszę spróbować ponownie później.",
   USERNAME_IS_ALREADY_TAKEN:
     "Nazwa użytkownika jest już zajęta. Proszę wybrać inną nazwę użytkownika.",
+  USERNAME_IS_ALREADY_TAKEN_PLEASE_TRY_ANOTHER:
+    "Nazwa użytkownika jest już zajęta. Proszę spróbować innej nazwy użytkownika.",
   USERNAME_TOO_LONG: "Nazwa użytkownika nie może przekraczać 64 znaków.",
   USERNAME_TOO_SHORT: "Nazwa użytkownika musi mieć co najmniej 3 znaki.",
 } satisfies ErrorTypes;

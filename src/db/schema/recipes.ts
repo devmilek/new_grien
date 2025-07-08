@@ -38,7 +38,9 @@ export const recipes = pgTable("recipes", {
   licenseId: uuid("license_id").references(() => licenses.id, {
     onDelete: "set null",
   }),
-  authorId: uuid("author_id")
+  authorId: char("author_id", {
+    length: 16,
+  })
     .notNull()
     .references(() => user.id, {
       onDelete: "set null",
@@ -193,7 +195,9 @@ export type InsertRecipeAttribute = typeof recipeAttributes.$inferInsert;
 export const recipeLikes = pgTable(
   "likes",
   {
-    userId: uuid("user_id")
+    userId: char("user_id", {
+      length: 16,
+    })
       .notNull()
       .references(() => user.id, {
         onDelete: "cascade",

@@ -25,6 +25,7 @@ import { GeneratedAvatar } from "../generated-avatar";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getUserSlug } from "@/lib/utils";
 
 export const UserMenu = () => {
   const { data } = authClient.useSession();
@@ -86,7 +87,12 @@ export const UserMenu = () => {
             <span>Option 1</span>
           </DropdownMenuItem> */}
           <DropdownMenuItem asChild>
-            <Link href={`/kucharze/${data.user.username}`}>
+            <Link
+              href={`/kucharze/${getUserSlug(
+                data.user.id,
+                data.user.username || ""
+              )}`}
+            >
               <UserIcon size={16} className="opacity-60" aria-hidden="true" />
               Profil
             </Link>

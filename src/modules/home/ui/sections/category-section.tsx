@@ -5,7 +5,7 @@ import { categories, recipes } from "@/db/schema";
 import { cn, getRecipeSlug, getS3Url } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,7 +21,10 @@ export const CategorySection = async () => {
   }
 
   const data = await db.query.recipes.findMany({
-    where: eq(recipes.categoryId, category.id),
+    where: and(
+      eq(recipes.categoryId, category.id),
+      eq(recipes.published, true)
+    ),
     with: {
       file: true,
       category: true,

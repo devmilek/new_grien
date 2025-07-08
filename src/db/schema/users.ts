@@ -1,7 +1,21 @@
-import { pgTable, text, timestamp, boolean, uuid } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  uuid,
+  char,
+  varchar,
+} from "drizzle-orm/pg-core";
+import { customAlphabet } from "nanoid";
+
+const nanoid = customAlphabet(
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+  16
+);
 
 export const user = pgTable("user", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: char("id", { length: 16 }).primaryKey().default(nanoid()),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified")
@@ -17,7 +31,10 @@ export const user = pgTable("user", {
     .notNull(),
   username: text("username").unique().notNull(),
   displayUsername: text("display_username"),
+  bio: varchar("bio", { length: 500 }).default("").notNull(),
 });
+
+export type User = typeof user.$inferSelect;
 
 export const session = pgTable("session", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -27,7 +44,9 @@ export const session = pgTable("session", {
   updatedAt: timestamp("updated_at").notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  userId: uuid("user_id")
+  userId: char("user_id", {
+    length: 16,
+  })
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
@@ -36,7 +55,9 @@ export const account = pgTable("account", {
   id: uuid("id").primaryKey().defaultRandom(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
-  userId: uuid("user_id")
+  userId: char("user_id", {
+    length: 16,
+  })
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   accessToken: text("access_token"),

@@ -19,3 +19,7 @@ export const getIdFromSlug = (slug: string): string | null => {
 export const getRecipeSlug = (id: string, title: string) => {
   return `${slugify(title)}-${id}`;
 };
+
+export const getUserSlug = (id: string, username: string) => {
+  return `${slugify(username)}-${id}`;
+};

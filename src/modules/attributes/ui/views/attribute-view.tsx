@@ -1,6 +1,8 @@
+import { getAttribute } from "@/app/(main)/(attributes)/utils";
 import { DEFAULT_PAGE } from "@/contstants";
 import { db } from "@/db";
-import { Attribute, attributes, recipeAttributes } from "@/db/schema";
+import { Attribute, recipeAttributes } from "@/db/schema";
+import { pluralizeRecipes } from "@/lib/pluralize";
 import { loadRecipesSearchParams } from "@/modules/recipes-filtering/params";
 import { FacetedSearch } from "@/modules/recipes-filtering/ui/components/faceted-search";
 import { RecipesFeed } from "@/modules/recipes-filtering/ui/sections/recipes-feed";
@@ -16,11 +18,10 @@ interface AttributePageProps {
   searchParams: Promise<SearchParams>;
   attributeType: Attribute["type"];
 }
-
 const subheadingMap: Record<Attribute["type"], string> = {
-  diets: "przepisów w tej diecie",
-  cuisines: "przepisów w tej kuchni",
-  occasions: "przepisów na tę okazję",
+  diets: "w tej diecie",
+  cuisines: "w tej kuchni",
+  occasions: "na tę okazję",
 };
 
 const AttributePage = async ({
@@ -29,9 +30,7 @@ const AttributePage = async ({
   attributeType,
 }: AttributePageProps) => {
   const { slug } = await params;
-  const attribute = await db.query.attributes.findFirst({
-    where: eq(attributes.slug, slug),
-  });
+  const attribute = await getAttribute(slug);
 
   if (!attribute || attribute.type !== attributeType) {
     return notFound();
@@ -59,7 +58,9 @@ const AttributePage = async ({
     <div className="container space-y-4">
       <RecipesListHero
         heading={attribute.name}
-        subheading={`${recipesCount} ${subheadingMap[attributeType]}`}
+        subheading={`${pluralizeRecipes(recipesCount)} ${
+          subheadingMap[attributeType]
+        }`}
         imageUrl="/food.jpg"
       />
       <div className="flex gap-4 items-start">

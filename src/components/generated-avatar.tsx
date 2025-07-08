@@ -2,7 +2,7 @@ import { createAvatar } from "@dicebear/core";
 import { notionists } from "@dicebear/collection";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { cn } from "@/lib/utils";
-import { BadgeCheckIcon } from "lucide-react";
+import { ChefHat } from "lucide-react";
 
 interface GeneratedAvatarProps {
   seed: string;
@@ -20,11 +20,15 @@ export const GeneratedAvatar = ({
     backgroundColor: ["ffffff"],
   });
 
+  const isAdmin = seed.toLowerCase() === "grien";
+
   return (
     <div className="relative">
-      <Avatar className={cn("border", className)}>
-        <AvatarImage src={avatar.toDataUri()} alt="Avatar" />
-        <AvatarFallback>{seed.charAt(0).toUpperCase()}</AvatarFallback>
+      <Avatar className={cn("border bg-white", className)}>
+        {!isAdmin && <AvatarImage src={avatar.toDataUri()} alt="Avatar" />}
+        <AvatarFallback className="bg-white">
+          <ChefHat className="text-primary w-2/3" />
+        </AvatarFallback>
       </Avatar>
       {verified && (
         <span className="absolute -end-1.5 -top-1.5">

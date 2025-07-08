@@ -11,6 +11,7 @@ import { z } from "zod/v4";
 
 export const recipeDetailsRouter = createTRPCRouter({
   getRecipe: baseProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    console.log("Fetching recipe details for ID:", input);
     const recipeId = input;
     const { user } = ctx;
 

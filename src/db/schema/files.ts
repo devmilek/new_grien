@@ -1,4 +1,5 @@
 import {
+  char,
   integer,
   pgTable,
   timestamp,
@@ -14,7 +15,9 @@ export const files = pgTable("files", {
   mimeType: varchar("mime_type", { length: 255 }).notNull(),
   size: integer("size").notNull(),
 
-  uploadedBy: uuid("uploaded_by")
+  uploadedBy: char("uploaded_by", {
+    length: 16,
+  })
     .references(() => user.id, {
       onDelete: "restrict",
     })

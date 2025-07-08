@@ -5,7 +5,9 @@ import { relations } from "drizzle-orm";
 
 export const comments = pgTable("comments", {
   id: uuid("id").defaultRandom().primaryKey(),
-  userId: uuid("user_id")
+  userId: char("user_id", {
+    length: 16,
+  })
     .notNull()
     .references(() => user.id, {
       onDelete: "cascade",
