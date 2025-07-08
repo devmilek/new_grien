@@ -82,10 +82,6 @@ export const UserMenu = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {/* <DropdownMenuItem>
-            <BoltIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Option 1</span>
-          </DropdownMenuItem> */}
           <DropdownMenuItem asChild>
             <Link
               href={`/kucharze/${getUserSlug(

@@ -27,9 +27,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import { SearchDialog } from "./search-dialog";
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
   const trpc = useTRPC();
   const { data: attributes } = useSuspenseQuery(
     trpc.attributes.getAttributes.queryOptions()
@@ -42,6 +44,10 @@ export const Navbar = () => {
 
   return (
     <header className="border-b bg-background w-full fixed top-0 z-50">
+      <SearchDialog
+        isOpen={isSearchDialogOpen}
+        onOpenChange={setIsSearchDialogOpen}
+      />
       <div className="container mx-auto h-16 flex items-center justify-between px-4">
         <div className="flex items-center gap-4">
           <Link
@@ -147,7 +153,10 @@ export const Navbar = () => {
 
         <div className="flex items-center gap-2 md:gap-4">
           {/* Search Button */}
-          <button className="border-input hidden lg:flex bg-background text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-fit rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]">
+          <button
+            onClick={() => setIsSearchDialogOpen(true)}
+            className="border-input hidden lg:flex bg-background text-foreground placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-fit rounded-md border px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]"
+          >
             <span className="flex grow items-center">
               <SearchIcon
                 className="text-muted-foreground/80 -ms-1 me-3"
@@ -164,7 +173,12 @@ export const Navbar = () => {
           </button>
 
           {/* Mobile Search Icon */}
-          <Button variant="ghost" size="icon" className="lg:hidden">
+          <Button
+            variant="ghost"
+            onClick={() => setIsSearchDialogOpen(true)}
+            size="icon"
+            className="lg:hidden"
+          >
             <SearchIcon size={20} />
           </Button>
 
