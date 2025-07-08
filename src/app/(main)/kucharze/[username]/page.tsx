@@ -1,18 +1,25 @@
 import { GeneratedAvatar } from "@/components/generated-avatar";
 import { Button } from "@/components/ui/button";
+import { DEFAULT_PAGE } from "@/contstants";
 import { db } from "@/db";
 import { user as dbUser } from "@/db/schema";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { loadRecipesSearchParams } from "@/modules/recipes-filtering/params";
+import { FacetedSearch } from "@/modules/recipes-filtering/ui/components/faceted-search";
+import { RecipesFeed } from "@/modules/recipes-filtering/ui/sections/recipes-feed";
+import { prefetch, trpc } from "@/trpc/server";
 import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { SearchParams } from "nuqs";
 import React from "react";
 
 interface ProfilePageProps {
   params: Promise<{ username: string }>;
+  searchParams: Promise<SearchParams>;
 }
 
-const ProfilePage = async ({ params }: ProfilePageProps) => {
+const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
   const { user } = await getCurrentSession();
   const { username } = await params;
 
@@ -24,8 +31,22 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
     return notFound();
   }
 
+  const { atrybuty, sort, kategoria } = await loadRecipesSearchParams(
+    searchParams
+  );
+
+  prefetch(
+    trpc.recipesFiltering.getRecipes.infiniteQueryOptions({
+      cursor: DEFAULT_PAGE,
+      categorySlug: kategoria,
+      attributesSlugs: atrybuty,
+      sortBy: sort,
+      authorId: data.id,
+    })
+  );
+
   return (
-    <div className="container px-4 sm:px-6 lg:px-8">
+    <div className="container">
       <div className="bg-white rounded-2xl pb-8 border">
         <div className="h-32 sm:h-48 md:h-58 w-full rounded-2xl overflow-hidden relative border">
           <Image src="/food.jpg" fill alt="Food" className="object-cover" />
@@ -53,6 +74,12 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
             )}
           </div>
         </div>
+      </div>
+      <div className="flex gap-4 items-start mt-4">
+        <div className="max-w-[300px] w-full hidden p-6 bg-white rounded-2xl border lg:block">
+          <FacetedSearch />
+        </div>
+        <RecipesFeed authorId={data.id} />
       </div>
     </div>
   );

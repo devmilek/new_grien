@@ -9,9 +9,11 @@ import { RecipesList, RecipesListSkeleton } from "../components/recipes-list";
 export const RecipesFeed = ({
   categorySlug,
   attributesSlugs,
+  authorId,
 }: {
   categorySlug?: string;
   attributesSlugs?: string[];
+  authorId?: string;
 }) => {
   return (
     <div className="border p-6 bg-white rounded-2xl flex-1 @container">
@@ -26,6 +28,7 @@ export const RecipesFeed = ({
         <RecipesList
           categorySlug={categorySlug}
           attributesSlugs={attributesSlugs}
+          authorId={authorId}
         />
       </Suspense>
     </div>

@@ -123,7 +123,11 @@ export const FilteredRecipeCard = ({
 
         <div className="flex items-center text-sm text-muted-foreground mt-4">
           <Link href="/" className="flex items-center gap-2">
-            <GeneratedAvatar seed={data.author.name} className="size-8" />
+            <GeneratedAvatar
+              seed={data.author.name}
+              className="size-8"
+              verified={data.author.verified}
+            />
             <span className="text-primary font-semibold text-sm">
               {data.author.name}
             </span>

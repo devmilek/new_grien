@@ -22,10 +22,11 @@ export const recipesFilteringRouter = createTRPCRouter({
         sortBy: z.enum(sortBy).default("newest").optional(), // Fixed typo: soryBy -> sortBy
         attributesSlugs: z.array(z.string()).optional(),
         cursor: z.number().default(DEFAULT_PAGE),
+        authorId: z.string().optional(),
       })
     )
     .query(async ({ input }) => {
-      const { categorySlug, sortBy, cursor, attributesSlugs } = input;
+      const { categorySlug, sortBy, cursor, attributesSlugs, authorId } = input;
 
       let category: Category | undefined;
 
@@ -64,6 +65,7 @@ export const recipesFilteringRouter = createTRPCRouter({
           where: and(
             eq(recipes.published, true),
             category ? eq(recipes.categoryId, category.id) : undefined,
+            authorId ? eq(recipes.authorId, authorId) : undefined,
             // Fixed: Use exists() to check for attributes in junction table
             attributes && attributes.length > 0
               ? exists(

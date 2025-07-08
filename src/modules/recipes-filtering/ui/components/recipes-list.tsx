@@ -15,11 +15,13 @@ import { EmptyState } from "@/components/empty-state";
 interface RecipesListProps {
   categorySlug?: string;
   attributesSlugs?: string[];
+  authorId?: string;
 }
 
 export const RecipesList = ({
   categorySlug,
   attributesSlugs,
+  authorId,
 }: RecipesListProps) => {
   const trpc = useTRPC();
 
@@ -37,6 +39,7 @@ export const RecipesList = ({
           categorySlug: categorySlug || category,
           attributesSlugs: [...(attributesSlugs || []), ...attributes],
           sortBy: sort,
+          authorId: authorId,
         },
         {
           initialCursor: 1,
