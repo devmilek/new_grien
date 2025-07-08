@@ -1,7 +1,7 @@
 import React from "react";
 import { GetRecipe } from "../../types";
 import Image from "next/image";
-import { getS3Url } from "@/lib/utils";
+import { getS3Url, getUserSlug } from "@/lib/utils";
 import { GeneratedAvatar } from "@/components/generated-avatar";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
@@ -31,7 +31,12 @@ export const RecipeHero = ({ data }: { data: GetRecipe }) => {
       <div className="flex flex-col">
         <h1 className="text-3xl font-display">{data.title}</h1>
         <div className="flex items-center mt-4 text-sm text-muted-foreground">
-          <Link href="/" className="flex items-center gap-2">
+          <Link
+            href={
+              "/kucharze/" + getUserSlug(data.author.id, data.author.username)
+            }
+            className="flex items-center gap-2"
+          >
             <GeneratedAvatar seed={data.author.name} className="size-8" />
             <span className="text-primary font-semibold text-sm">
               {data.author.name}

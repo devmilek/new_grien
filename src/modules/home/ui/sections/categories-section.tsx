@@ -36,7 +36,7 @@ export const CategoriesSection = () => {
               <ChevronRight className="size-4" />
             </div>
             <Image
-              src={`/${category.slug}.jpg`}
+              src={`/kategorie/${category.slug}.jpg`}
               alt={category.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform"

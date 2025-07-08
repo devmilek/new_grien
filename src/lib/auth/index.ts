@@ -23,7 +23,6 @@ export const auth = betterAuth({
         default: false,
         description: "Whether the user has verified their account",
         input: false,
-        required: true,
       },
       bio: {
         type: "string",

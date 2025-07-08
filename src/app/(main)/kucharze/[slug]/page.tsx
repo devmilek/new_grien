@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { DEFAULT_PAGE } from "@/contstants";
 import { db } from "@/db";
 import { user as dbUser, User } from "@/db/schema";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { getIdFromSlug, getUserSlug } from "@/lib/utils";
 import EditProfileDialog from "@/modules/account/ui/components/edit-profile-dialog";
 import { loadRecipesSearchParams } from "@/modules/recipes-filtering/params";
@@ -34,6 +35,7 @@ const getUserById = async (id: string) => {
 };
 
 const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
+  const { session } = await getCurrentSession();
   const { slug } = await params;
 
   const id = getIdFromSlug(slug);
@@ -97,8 +99,8 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
             </p>
           </div>
           <div className="w-full sm:w-auto">
-            {user && user.id === user.id ? (
-              <EditProfileDialog data={user} />
+            {session?.userId && user.id === session.userId ? (
+              <EditProfileDialog />
             ) : (
               <Button className="w-full sm:w-auto">Obserwuj</Button>
             )}

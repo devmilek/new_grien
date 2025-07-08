@@ -55,6 +55,7 @@ export const SignUpForm = () => {
           toast.success("Konto zostało utworzone. Możesz teraz się zalogować.");
         },
         onError: ({ error }) => {
+          console.log("Sign up error:", error);
           if (error.code) {
             setError(getErrorMessage(error.code));
           } else {
