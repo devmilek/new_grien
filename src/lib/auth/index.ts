@@ -2,6 +2,8 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
 import { username } from "better-auth/plugins";
+import { sendEmail } from "../emails";
+import ConfirmationEmail from "@/emails/confirmation-email";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -10,6 +12,20 @@ export const auth = betterAuth({
   plugins: [username()],
   emailAndPassword: {
     enabled: true,
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendEmail({
+        to: user.email,
+        react: ConfirmationEmail({
+          name: user.name,
+          confirmationUrl: url,
+        }),
+        subject: "Potwierdź swój adres e-mail",
+      });
+    },
   },
   advanced: {
     database: {

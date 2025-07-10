@@ -116,9 +116,15 @@ export const UserMenu = () => {
               <span>Zarządzaj przepisami</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <UserPenIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Ustawienia konta</span>
+          <DropdownMenuItem asChild>
+            <Link href="/konto/ustawienia">
+              <UserPenIcon
+                size={16}
+                className="opacity-60"
+                aria-hidden="true"
+              />
+              <span>Ustawienia konta</span>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
