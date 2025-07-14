@@ -53,7 +53,7 @@ export default function Dropzone({ onValueChange, value }: FileUpload) {
   // Use prop value for preview if available, otherwise use internal files
   const previewUrl = (() => {
     if (value) return URL.createObjectURL(value);
-    if (initialImage) return getS3Url(initialImage.id);
+    if (initialImage) return getS3Url(initialImage.key);
     return null;
   })();
 

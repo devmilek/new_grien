@@ -56,7 +56,7 @@ export const RecipeFormBasics = () => {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Opis przepisu</FormLabel>
+              <FormLabel>Zdjęcie przepisu</FormLabel>
               <FormControl>
                 <Dropzone value={field.value} onValueChange={field.onChange} />
               </FormControl>

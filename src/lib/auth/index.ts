@@ -4,12 +4,16 @@ import { db } from "@/db";
 import { username } from "better-auth/plugins";
 import { sendEmail } from "../emails";
 import ConfirmationEmail from "@/emails/confirmation-email";
+import { admin } from "better-auth/plugins";
+import AccountDeletionConfirmationEmail from "@/emails/account-deletion-confirmation-email";
+import { beforeDeleteUser } from "./delete-user";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg", // or "mysql", "sqlite"
+    usePlural: true,
   }),
-  plugins: [username()],
+  plugins: [username(), admin()],
   emailAndPassword: {
     enabled: true,
   },
@@ -33,6 +37,20 @@ export const auth = betterAuth({
     },
   },
   user: {
+    deleteUser: {
+      enabled: true,
+      sendDeleteAccountVerification: async ({ user, url }) => {
+        await sendEmail({
+          to: user.email,
+          react: AccountDeletionConfirmationEmail({
+            name: user.name,
+            confirmationUrl: url,
+          }),
+          subject: "Potwierdź usunięcie konta",
+        });
+      },
+      beforeDelete: async (user) => beforeDeleteUser({ user }),
+    },
     additionalFields: {
       verified: {
         type: "boolean",

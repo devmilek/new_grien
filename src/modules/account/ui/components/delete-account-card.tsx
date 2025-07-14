@@ -16,6 +16,7 @@ import React from "react";
 import { toast } from "sonner";
 
 export const DeleteAccountCard = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
   const handleDeleteAccount = async () => {
     await authClient.deleteUser(
       {
@@ -26,12 +27,14 @@ export const DeleteAccountCard = () => {
           toast.success(
             "Email z potwierdzeniem usunięcia konta został wysłany. Sprawdź swoją skrzynkę odbiorczą."
           );
+          setIsOpen(false);
         },
         onError: ({ error }) => {
           toast.error(
             getErrorMessage(error.code) ||
               "Wystąpił błąd podczas usuwania konta."
           );
+          setIsOpen(false);
         },
       }
     );
@@ -45,7 +48,7 @@ export const DeleteAccountCard = () => {
         </p>
       </div>
       <div className="flex justify-end py-4 px-6 border-t bg-muted">
-        <AlertDialog>
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
           <AlertDialogTrigger asChild>
             <Button variant="destructive">Usuń konto</Button>
           </AlertDialogTrigger>

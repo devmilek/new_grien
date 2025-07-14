@@ -31,7 +31,7 @@ export const CategoriesSection = () => {
             key={category.id}
             className="relative overflow-hidden rounded-xl group"
           >
-            <div className="p-6 flex justify-between bg-black/60 z-20 relative text-white">
+            <div className="p-6 flex justify-between items-center bg-black/60 z-20 relative text-white">
               <p className="font-medium">{category.name}</p>
               <ChevronRight className="size-4" />
             </div>
@@ -60,7 +60,7 @@ export const CategoriesSection = () => {
                   key={category.id}
                   className="relative overflow-hidden rounded-xl group"
                 >
-                  <div className="p-6 flex justify-between bg-black/60 z-20 relative text-white">
+                  <div className="p-6 flex justify-between items-center bg-black/60 z-20 relative text-white">
                     <p className="font-medium">{category.name}</p>
                     <ChevronRight className="size-4" />
                   </div>

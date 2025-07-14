@@ -12,6 +12,7 @@ import {
 } from "@/db/schema";
 import {
   baseProcedure,
+  createRateLimitMiddleware,
   createTRPCRouter,
   protectedProcedure,
 } from "@/trpc/init";
@@ -21,9 +22,11 @@ import { createRecipeSchemaServer, editRecipeSchemaServer } from "../schemas";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "@/lib/s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { mutationLimiter, viewLimiter } from "@/lib/rate-limiters";
 
 export const createRecipeRouter = createTRPCRouter({
   searchIngredients: baseProcedure
+    .use(createRateLimitMiddleware(viewLimiter))
     .input(
       z.object({
         query: z.string().optional(),
@@ -49,6 +52,7 @@ export const createRecipeRouter = createTRPCRouter({
       return data;
     }),
   createRecipe: protectedProcedure
+    .use(createRateLimitMiddleware(mutationLimiter))
     .input(createRecipeSchemaServer)
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
@@ -122,6 +126,7 @@ export const createRecipeRouter = createTRPCRouter({
     }),
 
   editRecipe: protectedProcedure
+    .use(createRateLimitMiddleware(mutationLimiter))
     .input(editRecipeSchemaServer)
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
@@ -242,6 +247,7 @@ export const createRecipeRouter = createTRPCRouter({
     }),
 
   getRecipe: protectedProcedure
+    .use(createRateLimitMiddleware(viewLimiter))
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
       const { id } = input;

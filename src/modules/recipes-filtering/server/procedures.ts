@@ -1,4 +1,8 @@
-import { baseProcedure, createTRPCRouter } from "@/trpc/init";
+import {
+  baseProcedure,
+  createRateLimitMiddleware,
+  createTRPCRouter,
+} from "@/trpc/init";
 import { z } from "zod/v4";
 import { sortBy } from "../hooks/use-recipes-filters";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/contstants";
@@ -13,9 +17,11 @@ import {
   Attribute,
 } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
+import { viewLimiter } from "@/lib/rate-limiters";
 
 export const recipesFilteringRouter = createTRPCRouter({
   getRecipes: baseProcedure
+    .use(createRateLimitMiddleware(viewLimiter))
     .input(
       z.object({
         categorySlug: z.string().optional(),

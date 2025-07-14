@@ -7,9 +7,11 @@ import {
   recipes,
   userFollowers,
 } from "@/db/schema";
+import { mutationLimiter, viewLimiter } from "@/lib/rate-limiters";
 import { s3 } from "@/lib/s3";
 import {
   baseProcedure,
+  createRateLimitMiddleware,
   createTRPCRouter,
   protectedProcedure,
 } from "@/trpc/init";
@@ -20,96 +22,99 @@ import { and, eq, gte, inArray, lte } from "drizzle-orm";
 import { z } from "zod/v4";
 
 export const accountRouter = createTRPCRouter({
-  getRecipesStats: protectedProcedure.query(async ({ ctx }) => {
-    const { user } = ctx;
+  getRecipesStats: protectedProcedure
+    .use(createRateLimitMiddleware(viewLimiter))
+    .query(async ({ ctx }) => {
+      const { user } = ctx;
 
-    const recipesCount = await db.$count(
-      recipes,
-      eq(recipes.authorId, user.id)
-    );
+      const recipesCount = await db.$count(
+        recipes,
+        eq(recipes.authorId, user.id)
+      );
 
-    const notPublishedCount = await db.$count(
-      recipes,
-      and(eq(recipes.authorId, user.id), eq(recipes.published, false))
-    );
+      const notPublishedCount = await db.$count(
+        recipes,
+        and(eq(recipes.authorId, user.id), eq(recipes.published, false))
+      );
 
-    const now = new Date();
-    const startOfCurrentMonth = startOfMonth(now);
-    const endOfCurrentMonth = endOfMonth(now);
+      const now = new Date();
+      const startOfCurrentMonth = startOfMonth(now);
+      const endOfCurrentMonth = endOfMonth(now);
 
-    const recipesThisMonth = await db.$count(
-      recipes,
-      and(
-        eq(recipes.authorId, user.id),
-        gte(recipes.createdAt, startOfCurrentMonth),
-        lte(recipes.createdAt, endOfCurrentMonth)
-      )
-    );
+      const recipesThisMonth = await db.$count(
+        recipes,
+        and(
+          eq(recipes.authorId, user.id),
+          gte(recipes.createdAt, startOfCurrentMonth),
+          lte(recipes.createdAt, endOfCurrentMonth)
+        )
+      );
 
-    const likesCount = await db.$count(
-      recipeLikes,
-      inArray(
-        recipeLikes.recipeId,
-        db
-          .select({ id: recipes.id })
-          .from(recipes)
-          .where(eq(recipes.authorId, user.id))
-      )
-    );
-
-    const likesThisMonth = await db.$count(
-      recipeLikes,
-      and(
+      const likesCount = await db.$count(
+        recipeLikes,
         inArray(
           recipeLikes.recipeId,
           db
             .select({ id: recipes.id })
             .from(recipes)
             .where(eq(recipes.authorId, user.id))
-        ),
-        gte(recipeLikes.createdAt, startOfCurrentMonth),
-        lte(recipeLikes.createdAt, endOfCurrentMonth)
-      )
-    );
+        )
+      );
 
-    const commentsCount = await db.$count(
-      comments,
-      inArray(
-        comments.recipeId,
-        db
-          .select({ id: recipes.id })
-          .from(recipes)
-          .where(eq(recipes.authorId, user.id))
-      )
-    );
+      const likesThisMonth = await db.$count(
+        recipeLikes,
+        and(
+          inArray(
+            recipeLikes.recipeId,
+            db
+              .select({ id: recipes.id })
+              .from(recipes)
+              .where(eq(recipes.authorId, user.id))
+          ),
+          gte(recipeLikes.createdAt, startOfCurrentMonth),
+          lte(recipeLikes.createdAt, endOfCurrentMonth)
+        )
+      );
 
-    const commentsThisMonth = await db.$count(
-      comments,
-      and(
+      const commentsCount = await db.$count(
+        comments,
         inArray(
           comments.recipeId,
           db
             .select({ id: recipes.id })
             .from(recipes)
             .where(eq(recipes.authorId, user.id))
-        ),
-        gte(comments.createdAt, startOfCurrentMonth),
-        lte(comments.createdAt, endOfCurrentMonth)
-      )
-    );
+        )
+      );
 
-    return {
-      recipesCount,
-      notPublishedCount,
-      recipesThisMonth,
-      likes: likesCount,
-      likesThisMonth: likesThisMonth,
-      comments: commentsCount,
-      commentsThisMonth,
-    };
-  }),
+      const commentsThisMonth = await db.$count(
+        comments,
+        and(
+          inArray(
+            comments.recipeId,
+            db
+              .select({ id: recipes.id })
+              .from(recipes)
+              .where(eq(recipes.authorId, user.id))
+          ),
+          gte(comments.createdAt, startOfCurrentMonth),
+          lte(comments.createdAt, endOfCurrentMonth)
+        )
+      );
+
+      return {
+        recipesCount,
+        notPublishedCount,
+        recipesThisMonth,
+        likes: likesCount,
+        likesThisMonth: likesThisMonth,
+        comments: commentsCount,
+        commentsThisMonth,
+      };
+    }),
 
   getUserRecipes: protectedProcedure
+    .use(createRateLimitMiddleware(viewLimiter))
     .input(
       z.object({
         cursor: z.number().default(DEFAULT_PAGE),
@@ -152,6 +157,7 @@ export const accountRouter = createTRPCRouter({
     }),
 
   getFollowStats: baseProcedure
+    .use(createRateLimitMiddleware(viewLimiter))
     .input(
       z.object({
         userId: z.string(),
@@ -183,6 +189,7 @@ export const accountRouter = createTRPCRouter({
     }),
 
   followUser: protectedProcedure
+    .use(createRateLimitMiddleware(mutationLimiter))
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { user: currentUser } = ctx;
@@ -215,6 +222,7 @@ export const accountRouter = createTRPCRouter({
     }),
 
   unfollowUser: protectedProcedure
+    .use(createRateLimitMiddleware(mutationLimiter))
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { user: currentUser } = ctx;
@@ -244,6 +252,7 @@ export const accountRouter = createTRPCRouter({
     }),
 
   deleteRecipe: protectedProcedure
+    .use(createRateLimitMiddleware(mutationLimiter))
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;

@@ -4,10 +4,15 @@ import {
 } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { auth } from ".";
+import { adminClient } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
   baseURL: "http://localhost:3000",
-  plugins: [usernameClient(), inferAdditionalFields<typeof auth>()],
+  plugins: [
+    usernameClient(),
+    inferAdditionalFields<typeof auth>(),
+    adminClient(),
+  ],
 });
 
 type ErrorTypes = Partial<Record<keyof typeof auth.$ERROR_CODES, string>> & {

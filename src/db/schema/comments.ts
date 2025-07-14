@@ -1,7 +1,7 @@
 import { pgTable, uuid, text, timestamp, char } from "drizzle-orm/pg-core";
-import { user } from "./users";
 import { recipes } from "./recipes";
 import { relations } from "drizzle-orm";
+import { users } from "./users";
 
 export const comments = pgTable("comments", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -9,7 +9,7 @@ export const comments = pgTable("comments", {
     length: 16,
   })
     .notNull()
-    .references(() => user.id, {
+    .references(() => users.id, {
       onDelete: "cascade",
     }),
   recipeId: char("recipe_id", {
@@ -29,9 +29,9 @@ export const comments = pgTable("comments", {
 });
 
 export const commentsRelations = relations(comments, ({ one }) => ({
-  user: one(user, {
+  user: one(users, {
     fields: [comments.userId],
-    references: [user.id],
+    references: [users.id],
   }),
   recipe: one(recipes, {
     fields: [comments.recipeId],

@@ -6,7 +6,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { user } from "./users";
+import { users } from "./users";
 
 export const files = pgTable("files", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -18,7 +18,7 @@ export const files = pgTable("files", {
   uploadedBy: char("uploaded_by", {
     length: 16,
   })
-    .references(() => user.id, {
+    .references(() => users.id, {
       onDelete: "restrict",
     })
     .notNull(),

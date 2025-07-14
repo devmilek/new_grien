@@ -1,7 +1,9 @@
 import { db } from "@/db";
 import { recipeLikes, recipes } from "@/db/schema";
+import { mutationLimiter, viewLimiter } from "@/lib/rate-limiters";
 import {
   baseProcedure,
+  createRateLimitMiddleware,
   createTRPCRouter,
   protectedProcedure,
 } from "@/trpc/init";
@@ -10,66 +12,69 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod/v4";
 
 export const recipeDetailsRouter = createTRPCRouter({
-  getRecipe: baseProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    console.log("Fetching recipe details for ID:", input);
-    const recipeId = input;
-    const { user } = ctx;
+  getRecipe: baseProcedure
+    .use(createRateLimitMiddleware(viewLimiter))
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const recipeId = input;
+      const { user } = ctx;
 
-    const recipe = await db.query.recipes.findFirst({
-      where: and(eq(recipes.id, recipeId)),
-      with: {
-        author: true,
-        file: true,
-        license: true,
-        category: {
-          columns: {
-            id: true,
-            name: true,
+      const recipe = await db.query.recipes.findFirst({
+        where: and(eq(recipes.id, recipeId)),
+        with: {
+          author: true,
+          file: true,
+          license: true,
+          category: {
+            columns: {
+              id: true,
+              name: true,
+            },
           },
-        },
-        preparationSteps: true,
-        ingredients: {
-          with: {
-            ingredientAlias: {
-              columns: {
-                alias: true,
-                id: true,
+          preparationSteps: true,
+          ingredients: {
+            with: {
+              ingredientAlias: {
+                columns: {
+                  alias: true,
+                  id: true,
+                },
+              },
+            },
+          },
+          attributes: {
+            with: {
+              attribute: {
+                columns: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  type: true,
+                },
               },
             },
           },
         },
-        attributes: {
-          with: {
-            attribute: {
-              columns: {
-                id: true,
-                name: true,
-                slug: true,
-                type: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!recipe) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Nie znaleziono przepisu.",
       });
-    }
 
-    if (!recipe.published && recipe.authorId !== user?.id) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Nie masz uprawnień do przeglądania tego przepisu.",
-      });
-    }
+      if (!recipe) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Nie znaleziono przepisu.",
+        });
+      }
 
-    return recipe;
-  }),
+      if (!recipe.published && recipe.authorId !== user?.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Nie masz uprawnień do przeglądania tego przepisu.",
+        });
+      }
+
+      return recipe;
+    }),
   toggleLike: protectedProcedure
+    .use(createRateLimitMiddleware(mutationLimiter))
     .input(z.object({ recipeId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
@@ -101,6 +106,7 @@ export const recipeDetailsRouter = createTRPCRouter({
       }
     }),
   getLikesMeta: baseProcedure
+    .use(createRateLimitMiddleware(viewLimiter))
     .input(z.object({ recipeId: z.string() }))
     .query(async ({ ctx, input }) => {
       const { user } = ctx;

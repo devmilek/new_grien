@@ -13,7 +13,7 @@ import {
 import { attributes, categories } from "./attributes";
 import { ingredientAliases } from "./ingredients";
 import { files } from "./files";
-import { user } from "./users";
+import { users } from "./users";
 import { relations } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
 
@@ -42,7 +42,7 @@ export const recipes = pgTable("recipes", {
     length: 16,
   })
     .notNull()
-    .references(() => user.id, {
+    .references(() => users.id, {
       onDelete: "set null",
     }),
   difficulty: difficultiesEnum("difficulty").notNull(),
@@ -74,9 +74,9 @@ export const recipesRelations = relations(recipes, ({ one, many }) => ({
     fields: [recipes.fileId],
     references: [files.id],
   }),
-  author: one(user, {
+  author: one(users, {
     fields: [recipes.authorId],
-    references: [user.id],
+    references: [users.id],
   }),
   license: one(licenses, {
     fields: [recipes.licenseId],
@@ -203,7 +203,7 @@ export const recipeLikes = pgTable(
       length: 16,
     })
       .notNull()
-      .references(() => user.id, {
+      .references(() => users.id, {
         onDelete: "cascade",
       }),
     recipeId: char("recipe_id", {

@@ -1,5 +1,6 @@
 import {
   baseProcedure,
+  createRateLimitMiddleware,
   createTRPCRouter,
   protectedProcedure,
 } from "@/trpc/init";
@@ -10,9 +11,11 @@ import { comments } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/contstants";
+import { mutationLimiter, viewLimiter } from "@/lib/rate-limiters";
 
 export const commentsRouter = createTRPCRouter({
   create: protectedProcedure
+    .use(createRateLimitMiddleware(mutationLimiter))
     .input(
       commentSchema.extend({
         recipeId: z.string().min(1, "ID przepisu jest wymagane"),
@@ -42,6 +45,7 @@ export const commentsRouter = createTRPCRouter({
       }
     }),
   getComments: baseProcedure
+    .use(createRateLimitMiddleware(viewLimiter))
     .input(
       z.object({
         recipeId: z.string().min(1, "ID przepisu jest wymagane"),
@@ -80,6 +84,7 @@ export const commentsRouter = createTRPCRouter({
     }),
 
   delete: protectedProcedure
+    .use(createRateLimitMiddleware(mutationLimiter))
     .input(
       z.object({
         commentId: z.string().min(1, "ID komentarza jest wymagane"),
