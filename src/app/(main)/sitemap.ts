@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { AttributeType } from "@/db/schema";
 import { MetadataRoute } from "next";
 
-export const revalidate = 60 * 60 * 24 * 7; // 24 hours
+export const revalidate = 604_800; // 24 hours
 
 const getAttributePath = (type: AttributeType) => {
   switch (type) {

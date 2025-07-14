@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { cn, getRecipeSlug } from "@/lib/utils";
 import { useCreateRecipe } from "@/modules/create-recipe/context/create-recipe-context";
 import {
   createRecipeSchema,
@@ -142,7 +142,7 @@ export const RecipeFormAdditional = () => {
         published: true,
       });
 
-      router.push(`/przepis/${recipeId}`);
+      router.push(`/przepis/${getRecipeSlug(recipeId, values.title)}`);
     }
   };
 

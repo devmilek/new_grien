@@ -2,10 +2,10 @@ import { db } from "@/db";
 import { getUserSlug } from "@/lib/utils";
 import { MetadataRoute } from "next";
 
-export const revalidate = 60 * 60 * 24; // 24 hours
+export const revalidate = 604_800; // 24 hours
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const data = await db.query.user.findMany({
+  const data = await db.query.users.findMany({
     limit: 50_000,
     columns: {
       id: true,

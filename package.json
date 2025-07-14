@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postbuild": "next-sitemap",
     "email": "bunx react-email dev --dir=./src/emails --port=3001"
   },
   "dependencies": {

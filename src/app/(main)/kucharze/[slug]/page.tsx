@@ -1,6 +1,6 @@
 import { DEFAULT_PAGE } from "@/contstants";
 import { db } from "@/db";
-import { user as dbUser, User } from "@/db/schema";
+import { users as dbUsers, User } from "@/db/schema";
 import { getCurrentSession } from "@/lib/auth/get-current-session";
 import { constructMetadata } from "@/lib/construct-metadata";
 import { getIdFromSlug, getUserSlug } from "@/lib/utils";
@@ -19,8 +19,8 @@ interface ProfilePageProps {
 }
 
 const getUserById = cache(async (id: string) => {
-  const user = await db.query.user.findFirst({
-    where: eq(dbUser.id, id),
+  const user = await db.query.users.findFirst({
+    where: eq(dbUsers.id, id),
   });
 
   if (!user) {
@@ -96,9 +96,8 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
     notFound();
   }
 
-  const { atrybuty, sort, kategoria } = await loadRecipesSearchParams(
-    searchParams
-  );
+  const { atrybuty, sort, kategoria } =
+    await loadRecipesSearchParams(searchParams);
 
   prefetch(
     trpc.recipesFiltering.getRecipes.infiniteQueryOptions({

@@ -3,6 +3,8 @@ import { CheckCircle, Heart, Users, ChefHat } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+export const dynamic = "force-dynamic";
+
 const AccountDeleted = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">

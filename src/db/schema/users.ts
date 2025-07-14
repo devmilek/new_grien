@@ -31,13 +31,13 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
-  username: text("username").unique(),
+  username: text("username").unique().notNull(),
   displayUsername: text("display_username"),
   role: userRole("role").default("user").notNull(),
   banned: boolean("banned"),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
-  verified: boolean("verified"),
+  verified: boolean("verified").default(false).notNull(),
   bio: text("bio"),
 });
 

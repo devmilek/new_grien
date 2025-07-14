@@ -138,7 +138,7 @@ export const FilteredRecipeCard = ({
             <GeneratedAvatar
               seed={data.author.name}
               className="size-8"
-              verified={data.author.verified}
+              verified={data.author.verified || false}
             />
             <span className="text-primary font-semibold text-sm">
               {data.author.name}

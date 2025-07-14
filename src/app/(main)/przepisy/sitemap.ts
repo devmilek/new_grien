@@ -4,7 +4,7 @@ import { getRecipeSlug, getS3Url } from "@/lib/utils";
 import { eq } from "drizzle-orm";
 import { MetadataRoute } from "next";
 
-export const revalidate = 60 * 60 * 24; // 24 hours
+export const revalidate = 604_800; // 24 hours
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const data = await db.query.recipes.findMany({
