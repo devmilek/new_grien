@@ -69,7 +69,9 @@ export function constructMetadata({
       }),
       creator: "@grien",
     },
-    metadataBase: new URL(process.env.BASE_URL || "http://localhost:3000"),
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+    ),
     ...(noIndex && {
       robots: {
         index: false,

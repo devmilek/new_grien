@@ -13,6 +13,7 @@ export const auth = betterAuth({
     provider: "pg", // or "mysql", "sqlite"
     usePlural: true,
   }),
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   plugins: [username(), admin()],
   emailAndPassword: {
     enabled: true,
