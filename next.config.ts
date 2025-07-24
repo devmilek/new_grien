@@ -7,12 +7,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "6mb",
     },
   },
-  env: {
-    DATABASE_URL:
-      process.env.NODE_ENV === "production"
-        ? process.env.DATABASE_URL_INTERNAL
-        : process.env.DATABASE_URL_EXTERNAL,
-  },
   images: {
     remotePatterns: [
       {
