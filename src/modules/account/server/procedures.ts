@@ -18,7 +18,7 @@ import {
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { TRPCError } from "@trpc/server";
 import { endOfMonth, startOfMonth } from "date-fns";
-import { and, eq, gte, inArray, lte } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, lte } from "drizzle-orm";
 import { z } from "zod/v4";
 
 export const accountRouter = createTRPCRouter({
@@ -129,6 +129,7 @@ export const accountRouter = createTRPCRouter({
         where: eq(recipes.authorId, user.id),
         limit: DEFAULT_PAGE_SIZE + 1,
         offset: (cursor - 1) * DEFAULT_PAGE_SIZE,
+        orderBy: desc(recipes.createdAt),
         with: {
           category: true,
           file: true,

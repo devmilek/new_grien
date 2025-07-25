@@ -30,8 +30,10 @@ export const IngredientInput = ({
   onChange,
   value,
 }: IngredientInputProps) => {
-  const [search, setSearch] = React.useState("");
-  const [debouncedSearch, setDebouncedSearch] = React.useState("");
+  const [search, setSearch] = React.useState(value?.name || "");
+  const [debouncedSearch, setDebouncedSearch] = React.useState(
+    value?.name || ""
+  );
 
   const trpc = useTRPC();
 

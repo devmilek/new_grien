@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "@/trpc/client";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { constructMetadata } from "@/lib/construct-metadata";
+import { AptabaseProvider } from "@aptabase/react";
 
 export const metadata: Metadata = constructMetadata({});
 
@@ -30,14 +31,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${dmSerifDisplay.variable} antialiased bg-zinc-100`}
       >
-        <TooltipProvider>
-          <NuqsAdapter>
-            <TRPCReactProvider>
-              {children}
-              <Toaster richColors theme="light" visibleToasts={5} />
-            </TRPCReactProvider>
-          </NuqsAdapter>
-        </TooltipProvider>
+        <AptabaseProvider appKey={process.env.NEXT_PUBLIC_APT_BASE!}>
+          <TooltipProvider>
+            <NuqsAdapter>
+              <TRPCReactProvider>
+                {children}
+                <Toaster richColors theme="light" visibleToasts={5} />
+              </TRPCReactProvider>
+            </NuqsAdapter>
+          </TooltipProvider>
+        </AptabaseProvider>
       </body>
     </html>
   );
